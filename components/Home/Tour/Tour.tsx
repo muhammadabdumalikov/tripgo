@@ -24,7 +24,7 @@ type Response = {
 };
 
 
-async function fetchListings(): Promise<Response> {
+async function fetchTours(): Promise<Response> {
   const res = await fetch("http://37.60.231.13:3001/api/tour/list", { method: 'post', body: JSON.stringify({})}); // Replace with your API endpoint
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
@@ -35,8 +35,8 @@ const Tour = () => {
   const router = useRouter();
 
    const { data, isLoading, error } = useQuery({
-    queryKey: ["listings"],
-    queryFn: fetchListings,
+    queryKey: ["tours"],
+    queryFn: fetchTours,
   });
 
   if (isLoading) return <p>Loading...</p>;

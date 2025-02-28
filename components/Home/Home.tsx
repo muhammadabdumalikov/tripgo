@@ -8,7 +8,7 @@ const Home = () => {
     <div className='overflow-hidden w-full'>
       <Hero />
       <Destination />
-      <Tour listingData={[]}/>
+      <Tour/>
     </div>
   )
 }
