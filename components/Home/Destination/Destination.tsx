@@ -49,6 +49,7 @@ const Destination = () => {
             src={src}
             alt={`Slide ${index + 1}`}
               fill
+              style={{borderRadius: 30}}
             className={`top-0 left-0 w-full h-full object-cover rounded-[30]`}
           />
          </div>
