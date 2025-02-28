@@ -24,7 +24,7 @@ const Destination = () => {
     <div className="flex flex-col items-center w-[90%] xl:w-[80%] mx-auto">
       {/* Heading and Buttons */}
       <div className="flex items-center justify-between w-full mt-24 mb-8">
-        <p className="text-[40px]">Top Travel Destinations</p>
+        <p className="text-[40px] text-[#050544]">Top Travel Destinations</p>
         <div className="w-24 flex items-center justify-between">
           <MdChevronLeft
             className="w-10 h-10 p-2 border border-gray-400 text-gray-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 rounded-full cursor-pointer
