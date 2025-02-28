@@ -42,7 +42,7 @@ const Destination = () => {
       {/* Carousel */}
       <div className="relative w-full h-56 md:h-[516px] overflow-hidden rounded-[30] mb-8">
         {images.map((src, index) => (
-          <div key={index} className={`h-full w-full duration-700 ease-in-out ${
+          <div key={index} className={`h-full w-full duration-700 ease-in-out rounded-[30] overflow-hidden ${
               index === currentIndex ? "" : "hidden"
             }`}>
              <Image
