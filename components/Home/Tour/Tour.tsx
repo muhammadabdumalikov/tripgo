@@ -27,7 +27,7 @@ type Response = {
 async function fetchTours(): Promise<Response> {
   const API_URL = "/api/tour/list"; // Calls the Next.js proxy instead
 
-  const res = await fetch(API_URL, { method: 'post', body: JSON.stringify({})}); // Replace with your API endpoint
+  const res = await fetch(API_URL, { method: 'post', body: JSON.stringify({}), headers: {'X-Lang': 'uz'}}); // Replace with your API endpoint
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
 }
@@ -92,7 +92,7 @@ const Tour = () => {
             <div className="items-center mt-1">
               <p className="text-sm text-gray-500">Cultural • Coffee</p>
 
-              <h3 className="text-lg font-semibold text-gray-800 break-words line-clamp-2">{item.title}</h3>
+              <h3 className="text-lg font-semibold text-[#050544] break-words line-clamp-2">{item.title}</h3>
             </div>
 
             {/* Price Section */}
