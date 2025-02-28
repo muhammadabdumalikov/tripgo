@@ -25,7 +25,9 @@ type Response = {
 
 
 async function fetchTours(): Promise<Response> {
-  const res = await fetch("http://37.60.231.13:3001/api/tour/list", { method: 'post', body: JSON.stringify({})}); // Replace with your API endpoint
+  const API_URL = "/api/tour/list"; // Calls the Next.js proxy instead
+
+  const res = await fetch(API_URL, { method: 'post', body: JSON.stringify({})}); // Replace with your API endpoint
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
 }

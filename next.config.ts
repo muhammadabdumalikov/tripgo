@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/tour/list",
+        destination: "http://37.60.231.13:3001/api/tour/list", // Proxies API requests
+      },
+    ];
+  },
 };
 
 export default nextConfig;
