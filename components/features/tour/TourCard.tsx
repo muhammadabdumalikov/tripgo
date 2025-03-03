@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { MdFavoriteBorder, MdStar } from 'react-icons/md';
 import Link from 'next/link';
+import { Star } from 'lucide-react';
 
 export interface Tour {
   id: number,
@@ -83,7 +84,7 @@ export const TourCard = ({
             {/* Rating */}
             <div className="flex items-center bg-green-500 text-white text-sm px-2 py-1 rounded-md">
               <span className="pr-1">{tour.rating || 0}</span>
-              <MdStar size={16} />
+              <Star className="w-4 h-4 ml-1" />
             </div>
           </div>
         </div>

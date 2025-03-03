@@ -133,6 +133,7 @@ export default function SearchPage() {
                 // Handle tour selection
                 console.log('Selected tour:', tour);
               }}
+              index={index}
               key={index}
             />
           ))}

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Star, Clock, Users, Calendar, MapPin, Globe, Shield, ChevronRight, Heart } from 'lucide-react';
+import { Calendar, Clock, Heart, MapPin, Share2, Star, Users, X } from 'lucide-react';
 
 interface TourDetailsProps {
   params: {
@@ -11,176 +11,163 @@ interface TourDetailsProps {
 
 const TourDetails = ({ params }: TourDetailsProps) => {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [showGallery, setShowGallery] = useState(false);
 
   // Mock data - In real app, fetch this based on params.id
   const tour = {
     id: params.id,
-    title: "Tashkent: Full-Day Chimgan Mountains & Charvak Lake Tour",
+    title: "Shveytsariya Alp tog'larida sarguzasht",
     rating: 4.8,
     reviews: 128,
     duration: "12 hours",
-    groupSize: "Up to 8 people",
-    price: 89,
+    groupSize: "2-8",
+    price: 2800,
     location: "Tashkent, Uzbekistan",
-    languages: ["English", "Russian", "Uzbek"],
     images: [
       "/destinations/nefrit.jpg",
       "/destinations/gulkam.jpg",
       "/destinations/tuzkon.jpg",
       "/destinations/issiqkol.jpg",
     ],
-    highlights: [
-      "Enjoy a scenic drive through the Chimgan Mountains",
-      "Visit the beautiful Charvak Lake",
-      "Experience local cuisine at a traditional restaurant",
-      "Take stunning photos at panoramic viewpoints",
-      "Optional activities: hiking, horseback riding"
-    ],
-    description: "Escape the city and discover the natural beauty of Uzbekistan on this full-day tour. Journey through the majestic Chimgan Mountains, visit the crystal-clear Charvak Lake, and immerse yourself in local culture with traditional food and optional activities."
+    description: "Escape the city and discover the natural beauty of Uzbekistan on this full-day tour. Journey through the majestic mountains, visit the crystal-clear lakes, and immerse yourself in local culture with traditional food and optional activities.",
+    included: [
+      "Professional guide",
+      "Hotel pickup and drop-off",
+      "Lunch at local restaurant",
+      "All entrance fees",
+      "Bottled water"
+    ]
   };
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="relative h-[60vh] bg-gray-900">
+    <main className="min-h-screen bg-gray-50">
+      {/* Hero Image Section */}
+      <div className="relative h-[75vh] bg-gray-900">
         <Image
           src={tour.images[selectedImage]}
           alt={tour.title}
           fill
-          className="object-cover opacity-90"
+          className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         
-        {/* Image Gallery Thumbnails */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-          {tour.images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => setSelectedImage(index)}
-              className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-all
-                ${selectedImage === index ? 'border-white scale-110' : 'border-transparent opacity-70'}`}
-            >
-              <Image
-                src={image}
-                alt={`Tour image ${index + 1}`}
-                width={64}
-                height={64}
-                className="object-cover w-full h-full"
-              />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/20" />
+
+        {/* Top Navigation */}
+        <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
+          <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+            <X className="w-6 h-6 text-white" />
+          </button>
+          <div className="flex gap-2">
+            <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+              <Share2 className="w-5 h-5 text-white" />
             </button>
-          ))}
+            <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
+              <Heart className="w-5 h-5 text-white" />
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full">
+                Featured
+              </div>
+              <div className="px-3 py-1 bg-white/20 backdrop-blur text-white text-sm font-medium rounded-full">
+                Mountain
+              </div>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">{tour.title}</h1>
+            <div className="flex flex-wrap items-center gap-4 text-white">
+              <div className="flex items-center gap-1">
+                <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                <span className="font-medium">{tour.rating}</span>
+                <span className="text-white/80">({tour.reviews} reviews)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-white/80" />
+                <span>{tour.duration}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-white/80" />
+                <span>{tour.groupSize} people</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-white/80" />
+                <span>{tour.location}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+      {/* Content Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-              <div className="flex items-start justify-between mb-4">
-                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">{tour.title}</h1>
-                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <Heart className="w-6 h-6 text-gray-600" />
-                </button>
-              </div>
+          <div className="lg:col-span-2 space-y-8">
+            {/* Description */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">About this tour</h2>
+              <p className="text-gray-600 leading-relaxed">{tour.description}</p>
+            </div>
 
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center gap-1">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  <span className="font-medium">{tour.rating}</span>
-                  <span className="text-gray-600">({tour.reviews} reviews)</span>
-                </div>
-                <div className="flex items-center gap-1 text-gray-600">
-                  <MapPin className="w-4 h-4" />
-                  <span>{tour.location}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Clock className="w-5 h-5 text-gray-400" />
-                  <span>{tour.duration}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Users className="w-5 h-5 text-gray-400" />
-                  <span>{tour.groupSize}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Globe className="w-5 h-5 text-gray-400" />
-                  <span>{tour.languages.join(", ")}</span>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Highlights</h2>
-                  <ul className="space-y-3">
-                    {tour.highlights.map((highlight, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <ChevronRight className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                        <span>{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Description</h2>
-                  <p className="text-gray-600 leading-relaxed">{tour.description}</p>
-                </div>
-              </div>
+            {/* What's Included */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">What's included</h2>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {tour.included.map((item, index) => (
+                  <li key={index} className="flex items-center gap-2 text-gray-600">
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
           {/* Booking Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
-              <div className="flex items-baseline justify-between mb-4">
+            <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-24">
+              <div className="flex items-baseline justify-between mb-6">
                 <div>
-                  <span className="text-2xl font-bold">${tour.price}</span>
-                  <span className="text-gray-600 ml-1">per person</span>
-                </div>
-                <div className="flex items-center text-green-600 text-sm">
-                  <Shield className="w-4 h-4 mr-1" />
-                  <span>Lowest price guarantee</span>
+                  <span className="text-3xl font-bold">${tour.price}</span>
+                  <span className="text-gray-500 ml-1">/ person</span>
                 </div>
               </div>
 
-              <div className="space-y-4 mb-6">
+              <div className="space-y-4">
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="date"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <select className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
-                    <option>1 person</option>
+                  <select className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none">
                     <option>2 people</option>
                     <option>3 people</option>
                     <option>4 people</option>
-                    <option>5+ people</option>
+                    <option>5 people</option>
+                    <option>6 people</option>
+                    <option>7 people</option>
+                    <option>8 people</option>
                   </select>
                 </div>
               </div>
 
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors">
-                Check Availability
+              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors">
+                Book Now
               </button>
 
-              <div className="mt-6 space-y-3 text-sm">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Shield className="w-4 h-4" />
-                  <span>Free cancellation up to 24 hours in advance</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Calendar className="w-4 h-4" />
-                  <span>Available tomorrow</span>
-                </div>
-              </div>
+              <p className="text-center text-sm text-gray-500 mt-4">
+                Free cancellation up to 24 hours before the tour
+              </p>
             </div>
           </div>
         </div>
