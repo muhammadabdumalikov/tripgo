@@ -1,48 +1,64 @@
-import React from 'react'
-import { FaCalendarWeek, FaMap } from 'react-icons/fa'
+'use client';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import LocationSearch from '../Home/Hero/LocationSearch';
 
-const SearchBox = () => {
-  return (
-    <div className='bg-white rounded-[25px] p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-      items-center justify-center gap-8 mt-4 sm:mt-12 w-[95%] sm:w-[80%]'
-    >
-      {/* 1st search input */}
-      <div className='flex items-center space-x-6'>
-        <FaMap className='w-6 h-6 text-blue-600' />
-        <div className='w-full'>
-          <p className='text-lg font-medium mb-[0.2rem]'>Location</p>
-          <input type="text" placeholder='Where are you going?' className='w-full outline-none border-none placeholder:text-gray-800'/>
-        </div>
-      </div>
-
-      {/* 2nd search input */}
-      <div className='flex items-center space-x-6'>
-        <FaCalendarWeek className='w-6 h-6 text-blue-600' />
-        <div>
-          <p className='text-lg font-medium mb-[0.2rem]'>Start Date</p>
-          <input type="date" className='outline-none border-none'/>
-        </div>
-      </div>
-
-      {/* 3rd search input */}
-      <div className='flex items-center space-x-6'>
-        <FaCalendarWeek className='w-6 h-6 text-blue-600' />
-        <div>
-          <p className='text-lg font-medium mb-[0.2rem]'>End Date</p>
-          <input type="date" className='outline-none border-none'/>
-        </div>
-      </div>
-
-      {/* 4th search input */}
-      <div className='flex items-center space-x-6'>
-        <FaCalendarWeek className='w-6 h-6 text-blue-600' />
-        <div>
-          <p className='text-lg font-medium mb-[0.2rem]'>Guest</p>
-          <p className='text-base font-normal'>Guest 1 Room 1</p>
-        </div>
-      </div>
-    </div>
-  )
+interface SearchBoxProps {
+  variant?: 'search' | 'default' | 'compact';
 }
 
-export default SearchBox
+const SearchBox = ({ }: SearchBoxProps) => {
+  const router = useRouter();
+  const [location, setLocation] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [guests, setGuests] = useState('Guest 1 Room 1');
+
+  const handleSearch = () => {
+    const searchParams = new URLSearchParams({
+      location: location || '',
+      startDate: startDate || '',
+      guests: guests || '',
+    });
+    router.push(`/search?${searchParams.toString()}`);
+  };
+
+  return (
+    <div className="flex items-center bg-white rounded-full shadow-md">
+      {/* Location */}
+      <div className="flex-1 px-6 py-2 border-r border-gray-200">
+        <LocationSearch onLocationSelect={(loc) => setLocation(loc)} />
+      </div>
+
+      {/* Start Date */}
+      <div className="flex-1 px-6 py-2 border-r border-gray-200">
+        <p className="text-sm font-medium">Start Date</p>
+        <input 
+          type="date" 
+          placeholder="dd/mm/yyyy"
+          className="w-full text-sm outline-none text-gray-600"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </div>
+
+      {/* Guest */}
+      <div className="flex-1 px-6 py-2">
+        <p className="text-sm font-medium">Guest</p>
+        <p className="text-sm text-gray-600">{guests}</p>
+      </div>
+
+      {/* Search Button */}
+      <div className="px-2">
+        <button
+          onClick={handleSearch}
+          className="rounded-full px-8 py-3 flex items-center justify-center overflow-hidden group bg-blue-500 relative hover:bg-gradient-to-r hover:from-blue-500
+            hover:to-bg-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-blue-500 transition-all ease-out duration-300"
+        >
+          Search
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default SearchBox;
