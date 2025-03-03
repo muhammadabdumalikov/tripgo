@@ -12,7 +12,7 @@ const SearchBox = ({ }: SearchBoxProps) => {
   const router = useRouter();
   const [location, setLocation] = useState('');
   const [startDate, setStartDate] = useState('');
-  const [guests, setGuests] = useState('Guest 1 Room 1');
+  const [guests] = useState('Guest 1 Room 1');
 
   const handleSearch = () => {
     const searchParams = new URLSearchParams({

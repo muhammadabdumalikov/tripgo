@@ -21,6 +21,7 @@ const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
     { id: 6, name: "Issiqko'l", address: "Bishkek, Kyrgyzstan" },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleOptionClick = (item: any) => {
     setSearchValue(item.name);
     setSelectedItem(item);

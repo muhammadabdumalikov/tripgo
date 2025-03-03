@@ -9,7 +9,7 @@ type Props = {
   openNav: () => void;
 };
 
-const Nav = ({ openNav }: Props) => {
+const Nav = ({ }: Props) => {
   const [navBg, setNavBg] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === '/';

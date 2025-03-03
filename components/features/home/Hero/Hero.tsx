@@ -1,4 +1,3 @@
-import SearchBox from '@/components/common/SearchBox'
 import Link from 'next/link'
 import React from 'react'
 

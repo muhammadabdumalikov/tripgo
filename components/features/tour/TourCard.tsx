@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { MdFavoriteBorder, MdStar } from 'react-icons/md';
+import { MdFavoriteBorder } from 'react-icons/md';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 

@@ -1,22 +1,22 @@
 'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Calendar, Clock, Heart, MapPin, Share2, Star, Users, X } from 'lucide-react';
+import { Calendar, Clock, Heart, MapPin, Star, Users, Shield, Globe } from 'lucide-react';
 
-interface TourDetailsProps {
+interface PageProps {
   params: {
     id: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-const TourDetails = ({ params }: TourDetailsProps) => {
+const TourDetails = ({ params }: PageProps) => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [showGallery, setShowGallery] = useState(false);
 
   // Mock data - In real app, fetch this based on params.id
   const tour = {
     id: params.id,
-    title: "Shveytsariya Alp tog'larida sarguzasht",
+    title: "Shveytsariya Alp tog&apos;larida sarguzasht",
     rating: 4.8,
     reviews: 128,
     duration: "12 hours",
@@ -57,12 +57,9 @@ const TourDetails = ({ params }: TourDetailsProps) => {
         {/* Top Navigation */}
         <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
           <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
-            <X className="w-6 h-6 text-white" />
+            <MapPin className="w-6 h-6 text-white" />
           </button>
           <div className="flex gap-2">
-            <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
-              <Share2 className="w-5 h-5 text-white" />
-            </button>
             <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
               <Heart className="w-5 h-5 text-white" />
             </button>
@@ -117,7 +114,7 @@ const TourDetails = ({ params }: TourDetailsProps) => {
 
             {/* What's Included */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4">What's included</h2>
+              <h2 className="text-xl font-semibold mb-4">What&apos;s included</h2>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {tour.included.map((item, index) => (
                   <li key={index} className="flex items-center gap-2 text-gray-600">
@@ -136,6 +133,10 @@ const TourDetails = ({ params }: TourDetailsProps) => {
                 <div>
                   <span className="text-3xl font-bold">${tour.price}</span>
                   <span className="text-gray-500 ml-1">/ person</span>
+                </div>
+                <div className="flex items-center text-green-600 text-sm">
+                  <Shield className="w-4 h-4 mr-1" />
+                  <span>Lowest price guarantee</span>
                 </div>
               </div>
 
@@ -161,13 +162,20 @@ const TourDetails = ({ params }: TourDetailsProps) => {
                 </div>
               </div>
 
-              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors">
+              <button onClick={() => setSelectedImage(0)} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors">
                 Book Now
               </button>
 
-              <p className="text-center text-sm text-gray-500 mt-4">
-                Free cancellation up to 24 hours before the tour
-              </p>
+              <div className="mt-6 space-y-3 text-sm">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Shield className="w-4 h-4" />
+                  <span>Free cancellation up to 24 hours in advance</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Globe className="w-4 h-4" />
+                  <span>Available in multiple languages</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

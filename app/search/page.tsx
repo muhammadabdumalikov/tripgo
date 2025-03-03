@@ -97,6 +97,7 @@ const properties = [
 ];
 
 export default function SearchPage() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
