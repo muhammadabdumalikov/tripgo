@@ -45,17 +45,17 @@ const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
   }, []);
 
   return (
-    <div ref={dropdownRef} className="w-full">
+    <div ref={dropdownRef} className="w-full relative">
       {/* Input Field */}
       <div
-        className="flex flex-col"
+        className="flex flex-col cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <p className="text-sm font-medium">Location</p>
+        <p className="text-sm font-medium text-gray-800">Location</p>
         <input
           type="text"
           placeholder="Where are you going?"
-          className="w-full text-sm outline-none placeholder:text-gray-600"
+          className="w-full text-sm outline-none placeholder:text-gray-400 text-gray-600 focus:text-gray-800 cursor-pointer"
           value={searchValue}
           onChange={onInputChange}
         />
@@ -63,22 +63,25 @@ const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute w-96 mt-8 bg-white rounded-2xl shadow-lg max-w-md">
-          <ul className="py-2">
+        <div className="absolute w-96 mt-4 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] max-w-md border border-gray-100 overflow-hidden">
+          <ul className="py-2 max-h-[320px] overflow-y-auto">
             {locationSearchContent.map((item) => (
               <li
                 key={item.id}
-                className={`flex items-center px-6 py-3 hover:bg-gray-100 cursor-pointer transition ${
-                  selectedItem?.id === item.id ? "bg-gray-50" : ""
-                }`}
+                className={`flex items-center px-6 py-3.5 cursor-pointer 
+                  ${selectedItem?.id === item.id 
+                    ? "bg-blue-50" 
+                    : "hover:bg-gray-50"}`}
                 onClick={() => handleOptionClick(item)}
               >
-                <GrLocation className="text-blue-500 text-lg flex-shrink-0" />
+                <div className="w-8 h-8 rounded-lg bg-blue-100/50 flex items-center justify-center flex-shrink-0">
+                  <GrLocation className="text-blue-600 text-lg" />
+                </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-800">
                     {item.name}
                   </p>
-                  <p className="text-xs text-gray-500">{item.address}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.address}</p>
                 </div>
               </li>
             ))}

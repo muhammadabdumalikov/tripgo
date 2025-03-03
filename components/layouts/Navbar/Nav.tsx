@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { TbAirBalloon } from 'react-icons/tb';
-import SearchBox from '@/components/Helper/SearchBox';
+import SearchBox from '@/components/common/SearchBox';
 import Link from 'next/link';
 
 type Props = {

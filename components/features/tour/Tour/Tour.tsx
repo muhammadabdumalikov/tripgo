@@ -35,7 +35,7 @@ const RecommendedTours = () => {
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
       {data?.data?.map((item, index) => (
-        <TourCard key={index} tour={item} onPressHandler={onPressHandler}/>
+        <TourCard key={index} index={index} tour={item} onPressHandler={onPressHandler}/>
       ))}
     </div>
   );

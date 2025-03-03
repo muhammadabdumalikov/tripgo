@@ -1,5 +1,5 @@
 'use client';
-import { Tour, TourCard } from '@/components/Home/TourCard';
+import { Tour, TourCard } from '@/components/features/tour/TourCard';
 import { useEffect, useState } from 'react';
 
 // This would typically come from an API based on search params
