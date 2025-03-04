@@ -154,6 +154,89 @@ export default async function TourDetails({ params }: {params: Params}) {
               <p className="text-gray-600 leading-relaxed">{tour.description}</p>
             </div>
 
+            {/* Experience Section */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl font-semibold mb-6">Experience</h2>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Itinerary</h3>
+                
+                <div className="relative pl-8 space-y-6">
+                  {/* Vertical Line */}
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
+
+                  {/* Pickup Location */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                      <MapPin className="w-3 h-3 text-white" />
+                    </div>
+                    <h4 className="font-medium mb-1">Pickup location:</h4>
+                    <p className="text-gray-600">Tashkent</p>
+                  </div>
+
+                  {/* Car Journey */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-gray-100 border-2 border-gray-200 rounded-full flex items-center justify-center">
+                      <Users className="w-3 h-3 text-gray-400" />
+                    </div>
+                    <h4 className="font-medium mb-1">Car</h4>
+                    <p className="text-gray-600">(20 minutes)</p>
+                  </div>
+
+                  {/* Train Journey */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-gray-100 border-2 border-gray-200 rounded-full flex items-center justify-center">
+                      <Users className="w-3 h-3 text-gray-400" />
+                    </div>
+                    <h4 className="font-medium mb-1">Train</h4>
+                    <p className="text-gray-600">(2.17 hours)</p>
+                  </div>
+
+                  {/* Main Stop */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                      <Star className="w-3 h-3 text-white" />
+                    </div>
+                    <h4 className="font-medium mb-1">Samarkand</h4>
+                    <p className="text-gray-600">Visit, Guided tour, Shopping, Sightseeing (6 hours)</p>
+                  </div>
+
+                  {/* Return Train */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-gray-100 border-2 border-gray-200 rounded-full flex items-center justify-center">
+                      <Users className="w-3 h-3 text-gray-400" />
+                    </div>
+                    <h4 className="font-medium mb-1">Train</h4>
+                    <p className="text-gray-600">(2.17 hours)</p>
+                  </div>
+
+                  {/* Return Car */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-gray-100 border-2 border-gray-200 rounded-full flex items-center justify-center">
+                      <Users className="w-3 h-3 text-gray-400" />
+                    </div>
+                    <h4 className="font-medium mb-1">Car</h4>
+                    <p className="text-gray-600">(15 minutes)</p>
+                  </div>
+
+                  {/* Arrive Back */}
+                  <div className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                      <MapPin className="w-3 h-3 text-white" />
+                    </div>
+                    <h4 className="font-medium mb-1">Arrive back at:</h4>
+                    <p className="text-gray-600">Tashkent</p>
+                  </div>
+                </div>
+
+                {/* Reference Note */}
+                <p className="text-sm text-gray-500 mt-6 flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  For reference only. Itineraries are subject to change.
+                </p>
+              </div>
+            </div>
+
             {/* What's Included */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-semibold mb-4">What&apos;s included</h2>
