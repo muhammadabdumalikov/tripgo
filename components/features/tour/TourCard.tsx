@@ -36,8 +36,7 @@ export const TourCard = ({
       <div
         key={index}
         onClick={() => onPressHandler(tour)}
-        className="w-full h-96 bg-white overflow-hidden rounded-3xl cursor-pointer snap-center border flex flex-col
-          shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
+        className="w-full h-96 bg-white overflow-hidden rounded-3xl cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
       >
         {/* Image Section */}
         <div className="relative w-full h-56 flex-shrink-0 rounded-t-3xl overflow-hidden">

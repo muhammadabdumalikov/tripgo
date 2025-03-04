@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${font.className} antialiased bg-[#f2f4ff]`}
+        className={`${font.className} antialiased`}
       >
         <ResponsiveNav/>
         <ReactQueryProvider>{children}</ReactQueryProvider>

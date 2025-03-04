@@ -24,14 +24,14 @@ const SearchBox = ({ }: SearchBoxProps) => {
   };
 
   return (
-    <div className="flex items-center bg-white rounded-full shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-200">
+    <div className="flex items-center py-2 bg-white rounded-full shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-200">
       {/* Location */}
-      <div className="flex-1 px-6 py-3 border-r border-gray-200">
+      <div className="flex-1 px-6 py-1 border-r border-gray-200">
         <LocationSearch onLocationSelect={(loc) => setLocation(loc)} />
       </div>
 
       {/* Start Date */}
-      <div className="flex-1 px-6 py-3 border-r border-gray-200">
+      <div className="flex-1 px-6 py-1 border-r border-gray-200">
         <p className="text-sm font-medium text-gray-800">Start Date</p>
         <input 
           type="date" 
@@ -43,7 +43,7 @@ const SearchBox = ({ }: SearchBoxProps) => {
       </div>
 
       {/* Guest */}
-      <div className="flex-1 px-6 py-3">
+      <div className="flex-1 px-6 py-1">
         <p className="text-sm font-medium text-gray-800">Guest</p>
         <p className="text-sm text-gray-600">{guests}</p>
       </div>
