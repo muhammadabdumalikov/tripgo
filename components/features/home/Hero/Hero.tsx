@@ -21,7 +21,7 @@ const Hero = () => {
               Get the best prices on 2.000.000+ properties, worldwide
             </p>
 
-            <Link href='#' className='rounded-full px-4 md:px-6 mt-8 mb-8 py-2.5 overflow-hidden group bg-primary relative text-neutral-50'
+            <Link href='#' className='rounded-full px-4 md:px-6 mt-8 mb-8 py-2.5 overflow-hidden group bg-white relative text-blue-600'
             >
               <span className='absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-neutral-50 opacity-10
                 rotate-12 group-hover:translate-x-40 ease'></span>
