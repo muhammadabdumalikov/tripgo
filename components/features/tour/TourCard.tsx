@@ -16,6 +16,14 @@ export interface Tour {
   description: string,
   rating: number,
   price: string;
+  reviews?: Array<{
+    id: number;
+    user_name: string;
+    rating: number;
+    comment: string;
+    date: string;
+    user_image?: string;
+  }>;
 };
 
 export const TourCard = ({

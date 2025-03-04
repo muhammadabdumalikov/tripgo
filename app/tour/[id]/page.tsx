@@ -1,13 +1,14 @@
-'use client';
+// 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { Calendar, Clock, Heart, MapPin, Star, Users, Shield, Globe } from 'lucide-react';
+import { Calendar, Clock, Heart, MapPin, Star, Users, Shield, Globe, ThumbsUp } from 'lucide-react';
+import BookButton from '@/components/features/tour/BookButton';
 
 interface Tour {
   id: string;
   title: string;
   rating: number;
-  reviews: number;
+  reviews_count: number;
   duration: string;
   groupSize: string;
   price: number;
@@ -15,6 +16,14 @@ interface Tour {
   images: string[];
   description: string;
   included: string[];
+  reviews: Array<{
+    id: number;
+    user_name: string;
+    rating: number;
+    comment: string;
+    date: string;
+    user_image: string;
+  }>;
 }
 
 // Define Params type
@@ -27,7 +36,7 @@ export default async function TourDetails({ params }: {params: Params}) {
           id: id,
           title: "Shveytsariya Alp tog'larida sarguzasht",
           rating: 4.8,
-          reviews: 128,
+          reviews_count: 128,
           duration: "12 hours",
           groupSize: "2-8",
           price: 2800,
@@ -45,6 +54,24 @@ export default async function TourDetails({ params }: {params: Params}) {
             "Lunch at local restaurant",
             "All entrance fees",
             "Bottled water"
+          ],
+          reviews: [
+            {
+              id: 1,
+              user_name: "Sarah Johnson",
+              rating: 5,
+              comment: "Amazing experience! The guide was very knowledgeable and friendly. The views were breathtaking and the whole trip was well organized.",
+              date: "March 2024",
+              user_image: "/placeholder-avatar.jpg"
+            },
+            {
+              id: 2,
+              user_name: "Michael Chen",
+              rating: 4,
+              comment: "Great tour with beautiful scenery. The coffee tasting was a highlight. Would definitely recommend to others.",
+              date: "February 2024",
+              user_image: "/placeholder-avatar.jpg"
+            }
           ]
         };
         
@@ -97,7 +124,7 @@ export default async function TourDetails({ params }: {params: Params}) {
               <div className="flex items-center gap-1">
                 <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                 <span className="font-medium">{tour.rating}</span>
-                <span className="text-white/80">({tour.reviews} reviews)</span>
+                <span className="text-white/80">({tour.reviews_count} reviews)</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-white/80" />
@@ -139,19 +166,125 @@ export default async function TourDetails({ params }: {params: Params}) {
                 ))}
               </ul>
             </div>
+
+            {/* Reviews Section */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">Customer Reviews</h2>
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  <span className="font-medium text-lg">{tour.rating}</span>
+                  <span className="text-gray-500">({tour.reviews_count} reviews)</span>
+                </div>
+              </div>
+
+              {/* Review Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    </div>
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-yellow-400 rounded-full" style={{ width: '70%' }} />
+                    </div>
+                    <span className="text-sm text-gray-500 w-12">70%</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-gray-300" />
+                    </div>
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-yellow-400 rounded-full" style={{ width: '20%' }} />
+                    </div>
+                    <span className="text-sm text-gray-500 w-12">20%</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <Star className="w-4 h-4 text-gray-300" />
+                      <Star className="w-4 h-4 text-gray-300" />
+                    </div>
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                      <div className="h-2 bg-yellow-400 rounded-full" style={{ width: '10%' }} />
+                    </div>
+                    <span className="text-sm text-gray-500 w-12">10%</span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <ThumbsUp className="w-5 h-5 text-green-500" />
+                    <span className="text-gray-600">95% of travelers recommend this experience</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                    <span className="text-gray-600">Based on {tour.reviews_count} reviews</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Individual Reviews */}
+              <div className="space-y-6">
+                {tour.reviews.map((review) => (
+                  <div key={review.id} className="border-t pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                        <Image
+                          src={review.user_image}
+                          alt={review.user_name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-medium">{review.user_name}</h3>
+                          <span className="text-gray-500">•</span>
+                          <span className="text-gray-500">{review.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1 mb-2">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < review.rating
+                                  ? "text-yellow-400 fill-yellow-400"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-gray-600">{review.comment}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Show More Button */}
+              <button className="mt-8 w-full py-3 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50">
+                Show all reviews
+              </button>
+            </div>
           </div>
 
           {/* Booking Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-24">
+            <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-32">
               <div className="flex items-baseline justify-between mb-6">
                 <div>
                   <span className="text-3xl font-bold">${tour.price}</span>
                   <span className="text-gray-500 ml-1">/ person</span>
-                </div>
-                <div className="flex items-center text-green-600 text-sm">
-                  <Shield className="w-4 h-4 mr-1" />
-                  <span>Lowest price guarantee</span>
                 </div>
               </div>
 
@@ -177,9 +310,7 @@ export default async function TourDetails({ params }: {params: Params}) {
                 </div>
               </div>
 
-              <button onClick={() => {}} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors">
-                Book Now
-              </button>
+              <BookButton />
 
               <div className="mt-6 space-y-3 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">

@@ -1,6 +1,5 @@
 'use client';
 import { Tour, TourCard } from '@/components/features/tour/TourCard';
-import { useEffect, useState } from 'react';
 
 // This would typically come from an API based on search params
 const properties = [
@@ -97,21 +96,8 @@ const properties = [
 ];
 
 export default function SearchPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 150);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <main className="min-h-screen bg-white pt-[12vh]">
+    <main className="min-h-screen bg-white pt-[12vh] pb-16">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {properties.map((property, index) => (
