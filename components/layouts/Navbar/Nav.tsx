@@ -27,13 +27,13 @@ const Nav = ({ }: Props) => {
   return (
     <div className={`${
       isHomePage 
-        ? navBg ? 'bg-blue-950 shadow-md' : 'bg-transparent'
-        : 'bg-blue-950'
+        ? navBg ? 'bg-brand-navy shadow-md' : 'bg-transparent'
+        : 'bg-brand-navy'
     } transition-all duration-200 h-[12vh] z-[1000] fixed w-full`}>
       <div className='flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto'>
         {/* LOGO */}
         <Link href="/" className='flex items-center space-x-2'>
-          <div className='w-10 h-10 bg-[#ff8264] rounded-full flex items-center justify-center flex-col'>
+          <div className='w-10 h-10 bg-brand-pink rounded-full flex items-center justify-center flex-col'>
             <TbAirBalloon className='w-6 h-6 text-white' />
           </div>
           <h1 className='text-xl md:text-2xl text-white uppercase font-bold'>Tripgo</h1>
@@ -45,7 +45,7 @@ const Nav = ({ }: Props) => {
         </div>
 
         {/* Download App Button */}
-        <button className='hidden md:block px-8 py-3 text-white text-base bg-blue-500 hover:bg-blue-600 transition-colors rounded-full'>
+        <button className='hidden md:block px-8 py-3 text-white text-base bg-brand-pink hover:bg-brand-pink-dark transition-colors rounded-full'>
           Download App
         </button>
       </div>

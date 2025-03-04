@@ -36,7 +36,7 @@ export const TourCard = ({
       <div
         key={index}
         onClick={() => onPressHandler(tour)}
-        className="w-full h-96 bg-white overflow-hidden rounded-3xl cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
+        className="w-full h-96 bg-neutral-50 overflow-hidden rounded-3xl cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
       >
         {/* Image Section */}
         <div className="relative w-full h-56 flex-shrink-0 rounded-t-3xl overflow-hidden">
@@ -48,12 +48,12 @@ export const TourCard = ({
           />
 
           {/* Discount Box */}
-          <div className="absolute top-3 left-3 bg-blue-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+          <div className="absolute top-3 left-3 bg-secondary text-neutral-50 text-xs font-semibold px-3 py-1 rounded-full">
             25% OFF
           </div>
 
           {/* Organizer Logo */}
-          <div className="absolute bottom-3 right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center">
+          <div className="absolute bottom-3 right-3 w-10 h-10 bg-neutral-50 rounded-full flex items-center justify-center">
             <Image
               src={tour.organizer_logo || "/logo-placeholder.png"}
               alt="Organizer"
@@ -64,7 +64,7 @@ export const TourCard = ({
           </div>
 
           {/* Heart Icon */}
-          <div className="absolute top-3 right-3 text-white">
+          <div className="absolute top-3 right-3 text-neutral-50">
             <MdFavoriteBorder size={28} />
           </div>
         </div>

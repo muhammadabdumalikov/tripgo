@@ -8,7 +8,7 @@ const BookButton = ({ className = '' }: BookButtonProps) => {
   return (
     <button 
       onClick={() => {}} 
-      className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors ${className}`}
+      className={`w-full bg-primary hover:bg-primary-700 text-neutral-50 font-medium py-4 rounded-xl mt-6 transition-colors ${className}`}
     >
       Book Now
     </button>
