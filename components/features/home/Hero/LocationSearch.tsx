@@ -6,11 +6,17 @@ interface LocationSearchProps {
   onLocationSelect?: (location: string) => void;
 }
 
+interface LocationItem {
+  id: number;
+  name: string;
+  address: string;
+}
+
 const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
   const [searchValue, setSearchValue] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<LocationItem | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const locationSearchContent = [
     { id: 1, name: "Nefrit Ko'li", address: "Tashkent, Uzbekistan" },

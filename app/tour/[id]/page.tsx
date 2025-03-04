@@ -1,56 +1,71 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { Calendar, Clock, Heart, MapPin, Star, Users, Shield, Globe } from 'lucide-react';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
+interface Tour {
+  id: string;
+  title: string;
+  rating: number;
+  reviews: number;
+  duration: string;
+  groupSize: string;
+  price: number;
+  location: string;
+  images: string[];
+  description: string;
+  included: string[];
 }
 
-const TourDetails = ({ params }: PageProps) => {
-  const [selectedImage, setSelectedImage] = useState(0);
+// Define Params type
+type Params = Promise<{ id: string }>;
 
-  // Mock data - In real app, fetch this based on params.id
-  const tour = {
-    id: params.id,
-    title: "Shveytsariya Alp tog&apos;larida sarguzasht",
-    rating: 4.8,
-    reviews: 128,
-    duration: "12 hours",
-    groupSize: "2-8",
-    price: 2800,
-    location: "Tashkent, Uzbekistan",
-    images: [
-      "/destinations/nefrit.jpg",
-      "/destinations/gulkam.jpg",
-      "/destinations/tuzkon.jpg",
-      "/destinations/issiqkol.jpg",
-    ],
-    description: "Escape the city and discover the natural beauty of Uzbekistan on this full-day tour. Journey through the majestic mountains, visit the crystal-clear lakes, and immerse yourself in local culture with traditional food and optional activities.",
-    included: [
-      "Professional guide",
-      "Hotel pickup and drop-off",
-      "Lunch at local restaurant",
-      "All entrance fees",
-      "Bottled water"
-    ]
-  };
+export default async function TourDetails({ params }: {params: Params}) {
+  const {id} = await params;
+
+        const tour: Tour = {
+          id: id,
+          title: "Shveytsariya Alp tog'larida sarguzasht",
+          rating: 4.8,
+          reviews: 128,
+          duration: "12 hours",
+          groupSize: "2-8",
+          price: 2800,
+          location: "Tashkent, Uzbekistan",
+          images: [
+            "/bg2.jpg",
+            "/bg2.jpg",
+            "/bg2.jpg",
+            "/bg2.jpg",
+          ],
+          description: "Escape the city and discover the natural beauty of Uzbekistan on this full-day tour. Journey through the majestic mountains, visit the crystal-clear lakes, and immerse yourself in local culture with traditional food and optional activities.",
+          included: [
+            "Professional guide",
+            "Hotel pickup and drop-off",
+            "Lunch at local restaurant",
+            "All entrance fees",
+            "Bottled water"
+          ]
+        };
+        
+        // Simulate network delay        
+  if (!tour) {
+    return <div>Loading...</div>;
+  }
+
 
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Image Section */}
       <div className="relative h-[75vh] bg-gray-900">
         <Image
-          src={tour.images[selectedImage]}
+          src={tour.images[0]}
           alt={tour.title}
           fill
           className="object-cover"
           priority
         />
-        
+
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/20" />
 
@@ -162,7 +177,7 @@ const TourDetails = ({ params }: PageProps) => {
                 </div>
               </div>
 
-              <button onClick={() => setSelectedImage(0)} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors">
+              <button onClick={() => {}} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-4 rounded-xl mt-6 transition-colors">
                 Book Now
               </button>
 
@@ -183,5 +198,3 @@ const TourDetails = ({ params }: PageProps) => {
     </main>
   );
 };
-
-export default TourDetails; 
