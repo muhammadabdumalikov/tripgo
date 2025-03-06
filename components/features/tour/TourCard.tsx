@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { MdFavoriteBorder } from 'react-icons/md';
 import Link from 'next/link';
 import { FaStar } from "react-icons/fa";
 
@@ -64,9 +63,9 @@ export const TourCard = ({
           </div>
 
           {/* Heart Icon */}
-          <div className="absolute top-3 right-3 text-neutral-50">
-            <MdFavoriteBorder size={28} />
-          </div>
+          {/* <div className="absolute top-3 right-3 text-neutral-50">
+            <FavoriteButton />
+          </div> */}
         </div>
 
         {/* Info Section */}
@@ -75,7 +74,7 @@ export const TourCard = ({
             <p className="text-sm text-gray-500">Cultural • Coffee</p>
 
             <h3 className="text-lg font-semibold text-[#050544] break-words line-clamp-2">
-              {tour.title}wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+              {tour.title}
             </h3>
           </div>
 

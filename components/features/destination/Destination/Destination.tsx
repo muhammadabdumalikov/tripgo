@@ -23,7 +23,7 @@ const Destination = () => {
   return (
     <div className="flex flex-col items-center w-[90%] xl:w-[80%] mx-auto">
       {/* Heading and Buttons */}
-      <div className="flex items-center justify-between w-full mt-24 mb-8">
+      <div className="flex items-center justify-between w-full mt-16 mb-8">
         <p className="text-[40px] text-[#050544]">Top Travel Destinations</p>
         <div className="w-24 flex items-center justify-between">
           <MdChevronLeft

@@ -1,8 +1,9 @@
 // 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { Calendar, Clock, Heart, MapPin, Star, Users, Shield, Globe, ThumbsUp } from 'lucide-react';
+import { Calendar, Clock, MapPin, Star, Users, Shield, Globe, ThumbsUp } from 'lucide-react';
 import BookButton from '@/components/features/tour/BookButton';
+import FavoriteButton from '@/components/features/tour/FavoriteButton';
 
 interface Tour {
   id: string;
@@ -29,53 +30,53 @@ interface Tour {
 // Define Params type
 type Params = Promise<{ id: string }>;
 
-export default async function TourDetails({ params }: {params: Params}) {
-  const {id} = await params;
+export default async function TourDetails({ params }: { params: Params }) {
+  const { id } = await params;
 
-        const tour: Tour = {
-          id: id,
-          title: "Shveytsariya Alp tog'larida sarguzasht",
-          rating: 4.8,
-          reviews_count: 128,
-          duration: "12 hours",
-          groupSize: "2-8",
-          price: 2800,
-          location: "Tashkent, Uzbekistan",
-          images: [
-            "/bg2.jpg",
-            "/bg2.jpg",
-            "/bg2.jpg",
-            "/bg2.jpg",
-          ],
-          description: "Escape the city and discover the natural beauty of Uzbekistan on this full-day tour. Journey through the majestic mountains, visit the crystal-clear lakes, and immerse yourself in local culture with traditional food and optional activities.",
-          included: [
-            "Professional guide",
-            "Hotel pickup and drop-off",
-            "Lunch at local restaurant",
-            "All entrance fees",
-            "Bottled water"
-          ],
-          reviews: [
-            {
-              id: 1,
-              user_name: "Sarah Johnson",
-              rating: 5,
-              comment: "Amazing experience! The guide was very knowledgeable and friendly. The views were breathtaking and the whole trip was well organized.",
-              date: "March 2024",
-              user_image: "/placeholder-avatar.jpg"
-            },
-            {
-              id: 2,
-              user_name: "Michael Chen",
-              rating: 4,
-              comment: "Great tour with beautiful scenery. The coffee tasting was a highlight. Would definitely recommend to others.",
-              date: "February 2024",
-              user_image: "/placeholder-avatar.jpg"
-            }
-          ]
-        };
-        
-        // Simulate network delay        
+  const tour: Tour = {
+    id: id,
+    title: "Shveytsariya Alp tog'larida sarguzasht",
+    rating: 4.8,
+    reviews_count: 128,
+    duration: "12 hours",
+    groupSize: "2-8",
+    price: 2800,
+    location: "Tashkent, Uzbekistan",
+    images: [
+      "/bg2.jpg",
+      "/bg2.jpg",
+      "/bg2.jpg",
+      "/bg2.jpg",
+    ],
+    description: "Escape the city and discover the natural beauty of Uzbekistan on this full-day tour. Journey through the majestic mountains, visit the crystal-clear lakes, and immerse yourself in local culture with traditional food and optional activities.",
+    included: [
+      "Professional guide",
+      "Hotel pickup and drop-off",
+      "Lunch at local restaurant",
+      "All entrance fees",
+      "Bottled water"
+    ],
+    reviews: [
+      {
+        id: 1,
+        user_name: "Sarah Johnson",
+        rating: 5,
+        comment: "Amazing experience! The guide was very knowledgeable and friendly. The views were breathtaking and the whole trip was well organized.",
+        date: "March 2024",
+        user_image: "/placeholder-avatar.jpg"
+      },
+      {
+        id: 2,
+        user_name: "Michael Chen",
+        rating: 4,
+        comment: "Great tour with beautiful scenery. The coffee tasting was a highlight. Would definitely recommend to others.",
+        date: "February 2024",
+        user_image: "/placeholder-avatar.jpg"
+      }
+    ]
+  };
+
+  // Simulate network delay        
   if (!tour) {
     return <div>Loading...</div>;
   }
@@ -89,30 +90,18 @@ export default async function TourDetails({ params }: {params: Params}) {
           src={tour.images[0]}
           alt={tour.title}
           fill
-          className="object-cover"
+          className="object-cover opacity-90"
           priority
         />
 
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/20" />
 
-        {/* Top Navigation */}
-        <div className="absolute top-0 left-0 right-0 flex justify-between items-center p-4">
-          <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
-            <MapPin className="w-6 h-6 text-white" />
-          </button>
-          <div className="flex gap-2">
-            <button className="w-10 h-10 bg-white/10 backdrop-blur rounded-full flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        </div>
-
         {/* Bottom Info */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-2 mb-3">
-              <div className="px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full">
+              <div className="px-3 py-1 bg-[#febd2d] text-black text-sm font-medium rounded-full">
                 Featured
               </div>
               <div className="px-3 py-1 bg-white/20 backdrop-blur text-white text-sm font-medium rounded-full">
@@ -157,10 +146,10 @@ export default async function TourDetails({ params }: {params: Params}) {
             {/* Experience Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-semibold mb-6">Experience</h2>
-              
+
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Itinerary</h3>
-                
+
                 <div className="relative pl-8 space-y-6">
                   {/* Vertical Line */}
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
@@ -323,8 +312,8 @@ export default async function TourDetails({ params }: {params: Params}) {
                     <div className="flex items-start gap-4">
                       <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                         <Image
-                          src={review.user_image}
-                          alt={review.user_name}
+                          alt={review.user_image}
+                          src='/images/reviewer.png'
                           fill
                           className="object-cover"
                         />
@@ -339,11 +328,10 @@ export default async function TourDetails({ params }: {params: Params}) {
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-4 h-4 ${
-                                i < review.rating
+                              className={`w-4 h-4 ${i < review.rating
                                   ? "text-yellow-400 fill-yellow-400"
                                   : "text-gray-300"
-                              }`}
+                                }`}
                             />
                           ))}
                         </div>
@@ -364,14 +352,15 @@ export default async function TourDetails({ params }: {params: Params}) {
           {/* Booking Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-32">
-              <div className="flex items-baseline justify-between mb-6">
+              <div className="flex items-center justify-between mb-6">
                 <div>
                   <span className="text-3xl font-bold">${tour.price}</span>
                   <span className="text-gray-500 ml-1">/ person</span>
                 </div>
+                <FavoriteButton />
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 mb-6">
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
@@ -393,7 +382,13 @@ export default async function TourDetails({ params }: {params: Params}) {
                 </div>
               </div>
 
-              <BookButton />
+              <BookButton
+                tour={{
+                  title: tour.title,
+                  price: tour.price,
+                  location: tour.location
+                }}
+              />
 
               <div className="mt-6 space-y-3 text-sm">
                 <div className="flex items-center gap-2 text-gray-600">
