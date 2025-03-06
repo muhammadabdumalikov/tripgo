@@ -1,9 +1,9 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { TbAirBalloon } from 'react-icons/tb';
 import SearchBox from '@/components/common/SearchBox';
 import Link from 'next/link';
+import Image from 'next/image';
 
 type Props = {
   openNav: () => void;
@@ -31,23 +31,29 @@ const Nav = ({ }: Props) => {
       } transition-all duration-200 h-[12vh] z-[1000] fixed w-full`}>
       <div className='flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto'>
         {/* LOGO */}
-        <Link href="/" className='flex items-center space-x-2'>
-          <div className='w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full flex items-center justify-center flex-col'>
-            <TbAirBalloon className='w-6 h-6 text-white' />
+        <Link href="/" className='flex items-center space-x-3'>
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-col ${isHomePage ? 'bg-white' : 'bg-transparent'}`}>
+            <Image 
+              src="/images/Logo.svg" 
+              alt="Tripgo Logo"
+              width={80}
+              height={80}
+              priority
+            />
           </div>
-          <h1 className={`text-xl md:text-2xl ${isHomePage
-              ? navBg ? 'text-blue-600' : 'text-white'
-              : 'text-blue-600'
-            } uppercase font-bold`}>Tripgo</h1>
+          <h1 className={`text-2xl md:text-3xl ${isHomePage
+              ? navBg ? 'text-black' : 'text-white'
+              : 'text-black'
+            } font-bold`}>Tripgoimage.png</h1>
         </Link>
 
         {/* SearchBox */}
-        <div className='flex-1 max-w-3xl mx-8'>
+        <div className='hidden md:flex flex-1 max-w-3xl mx-8'>
           <SearchBox variant={pathname === '/search' ? 'compact' : 'default'} />
         </div>
 
         {/* Download App Button */}
-        <button className='hidden md:block px-8 py-3 text-white text-base bg-gradient-to-r from-blue-600 to-blue-500 transition-colors rounded-full'>
+        <button className='hidden md:block px-8 py-3 text-black text-base bg-[#febd2d] hover:bg-[#e5a827] transition-colors rounded-full'>
           Download App
         </button>
       </div>

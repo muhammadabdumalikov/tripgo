@@ -2,17 +2,13 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import LocationSearch from '../features/home/Hero/LocationSearch';
+import LocationSearch from './LocationSearch';
 
-interface SearchBoxProps {
-  variant?: 'search' | 'default' | 'compact';
-}
-
-const SearchBox = ({ }: SearchBoxProps) => {
+const MobileSearchBox = () => {
   const router = useRouter();
   const [location, setLocation] = useState('');
   const [startDate, setStartDate] = useState('');
-  const [guests] = useState('Guest 1 Room 1');
+  const [guests] = useState('2 adults - 1 children - 1 room');
 
   const handleSearch = () => {
     const searchParams = new URLSearchParams({
@@ -24,18 +20,18 @@ const SearchBox = ({ }: SearchBoxProps) => {
   };
 
   return (
-    <div className="flex items-center py-2 bg-white rounded-full shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-200">
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
       {/* Location */}
-      <div className="flex-1 px-6 py-1 border-r border-gray-200">
+      <div className="px-6 py-4 border-b border-gray-200">
         <LocationSearch onLocationSelect={(loc) => setLocation(loc)} />
       </div>
 
       {/* Start Date */}
-      <div className="flex-1 px-6 py-1 border-r border-gray-200">
-        <p className="text-sm font-medium text-gray-800">Start Date</p>
+      <div className="px-6 py-4 border-b border-gray-200">
+        <p className="text-sm font-medium text-gray-800">Check in - Check out</p>
         <input 
-          type="date" 
-          placeholder="dd/mm/yyyy"
+          type="text" 
+          placeholder="Wed 2 Mar - Fri 11 Apr"
           className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
@@ -43,18 +39,18 @@ const SearchBox = ({ }: SearchBoxProps) => {
       </div>
 
       {/* Guest */}
-      <div className="flex-1 px-6 py-1">
+      <div className="px-6 py-4 border-b border-gray-200">
         <p className="text-sm font-medium text-gray-800">Guest</p>
         <p className="text-sm text-gray-600">{guests}</p>
       </div>
 
       {/* Search Button */}
-      <div className="px-3">
+      <div className="p-6">
         <button
           onClick={handleSearch}
-          className="bg-[#febd2d] hover:bg-[#e5a827] text-black rounded-full px-8 py-3.5 font-medium 
+          className="w-full bg-[#4169E1] hover:bg-[#3154b3] text-white rounded-xl px-8 py-3.5 font-medium 
           shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] 
-          flex items-center gap-2 transition-all duration-200"
+          flex items-center justify-center gap-2 transition-all duration-200"
         >
           <Search className="w-4 h-4" />
           <span>Search</span>
@@ -64,4 +60,4 @@ const SearchBox = ({ }: SearchBoxProps) => {
   );
 };
 
-export default SearchBox;
+export default MobileSearchBox; 
