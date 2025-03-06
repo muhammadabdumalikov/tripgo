@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { MdFavoriteBorder } from 'react-icons/md';
 import Link from 'next/link';
-import { Star } from 'lucide-react';
+import { FaStar } from "react-icons/fa";
 
 export interface Tour {
   id: number,
@@ -75,7 +75,7 @@ export const TourCard = ({
             <p className="text-sm text-gray-500">Cultural • Coffee</p>
 
             <h3 className="text-lg font-semibold text-[#050544] break-words line-clamp-2">
-              {tour.title}
+              {tour.title}wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             </h3>
           </div>
 
@@ -91,7 +91,7 @@ export const TourCard = ({
             {/* Rating */}
             <div className="flex items-center bg-green-500 text-white text-sm px-2 py-1 rounded-md">
               <span className="pr-1">{tour.rating || 0}</span>
-              <Star className="w-4 h-4 ml-1" />
+              <FaStar className="w-4 h-4 ml-1" />
             </div>
           </div>
         </div>

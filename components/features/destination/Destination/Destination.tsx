@@ -27,12 +27,12 @@ const Destination = () => {
         <p className="text-[40px] text-[#050544]">Top Travel Destinations</p>
         <div className="w-24 flex items-center justify-between">
           <MdChevronLeft
-            className="w-10 h-10 p-2 border border-gray-400 text-gray-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 rounded-full cursor-pointer
+            className="w-10 h-10 p-2 border border-gray-400 text-gray-400 hover:bg-[#febd2d] hover:text-black hover:border-[#febd2d] rounded-full cursor-pointer
               transition-all ease duration-500"
             onClick={prevSlide}
           />
           <MdChevronRight
-            className="w-10 h-10 p-2 border border-gray-400 text-gray-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 rounded-full cursor-pointer
+            className="w-10 h-10 p-2 border border-gray-400 text-gray-400 hover:bg-[#febd2d] hover:text-black hover:border-[#febd2d] rounded-full cursor-pointer
               transition-all ease duration-500"
             onClick={nextSlide}
           />

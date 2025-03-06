@@ -44,7 +44,7 @@ const Nav = ({ }: Props) => {
           <h1 className={`text-2xl md:text-3xl ${isHomePage
               ? navBg ? 'text-black' : 'text-white'
               : 'text-black'
-            } font-bold`}>Tripgoimage.png</h1>
+            } font-bold`}>Tripgo</h1>
         </Link>
 
         {/* SearchBox */}

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import MobileSearchBox from './MobileSearchBox'
+import SearchBox from '@/components/common/SearchBox'
 
 const Hero = () => {
   return (
@@ -24,7 +24,7 @@ const Hero = () => {
 
             {/* Search Box for Mobile */}
             <div className='w-full block md:hidden mb-8'>
-              <MobileSearchBox />
+              <SearchBox />
             </div>
 
             {/* Get Started Button (hidden on mobile) */}
