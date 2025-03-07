@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Calendar, Clock, MapPin, Star, Users, Shield, Globe, ThumbsUp } from 'lucide-react';
 import BookButton from '@/components/features/tour/BookButton';
 import FavoriteButton from '@/components/features/tour/FavoriteButton';
+// import TourMap from '@/components/features/tour/TourMap';
 
 interface Tour {
   id: string;
@@ -14,9 +15,15 @@ interface Tour {
   groupSize: string;
   price: number;
   location: string;
+  startLocation: string;
+  endLocation: string;
   images: string[];
   description: string;
   included: string[];
+  participants: Array<{
+    image: string;
+    alt: string;
+  }>;
   reviews: Array<{
     id: number;
     user_name: string;
@@ -42,6 +49,8 @@ export default async function TourDetails({ params }: { params: Params }) {
     groupSize: "2-8",
     price: 2800,
     location: "Tashkent, Uzbekistan",
+    startLocation: "Tashkent, Uzbekistan",
+    endLocation: "Samarkand, Uzbekistan",
     images: [
       "/bg2.jpg",
       "/bg2.jpg",
@@ -55,6 +64,13 @@ export default async function TourDetails({ params }: { params: Params }) {
       "Lunch at local restaurant",
       "All entrance fees",
       "Bottled water"
+    ],
+    participants: [
+      { image: '/images/reviewer.png', alt: 'Participant 1' },
+      { image: '/images/reviewer.png', alt: 'Participant 2' },
+      { image: '/images/reviewer.png', alt: 'Participant 3' },
+      { image: '/images/reviewer.png', alt: 'Participant 4' },
+      { image: '/images/reviewer.png', alt: 'Participant 5' },
     ],
     reviews: [
       {
@@ -140,7 +156,65 @@ export default async function TourDetails({ params }: { params: Params }) {
             {/* Description */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-xl font-semibold mb-4">About this tour</h2>
-              <p className="text-gray-600 leading-relaxed">{tour.description}</p>
+              <p className="text-gray-600 leading-relaxed mb-6">{tour.description}</p>
+              
+              {/* Travel Participants - Integrated with Description */}
+              <div className="border-t pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center">
+                      {tour.participants.map((participant, index) => (
+                        <div 
+                          key={index} 
+                          className="relative -ml-2 first:ml-0 transition-transform hover:-translate-y-1"
+                          style={{ zIndex: 10 - index }}
+                        >
+                          <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white">
+                            <Image
+                              src={participant.image}
+                              alt={participant.alt}
+                              width={32}
+                              height={32}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                      <div 
+                        className="relative -ml-2 w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-medium border-2 border-white transition-transform hover:-translate-y-1"
+                        style={{ zIndex: 0 }}
+                      >
+                        +24
+                      </div>
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-900">29 travelers</span>
+                      <span className="text-gray-500"> joined this month</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Users className="w-4 h-4 text-[#febd2d]" />
+                    <span className="text-gray-500">Next trip in 2 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Map Section */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-xl font-semibold mb-4">Tour Route</h2>
+              <div className="flex items-center gap-2 text-gray-600 mb-4">
+                <MapPin className="w-5 h-5 text-[#febd2d]" />
+                <span>From: {tour.startLocation}</span>
+                <span className="mx-2">→</span>
+                <MapPin className="w-5 h-5 text-[#febd2d]" />
+                <span>To: {tour.endLocation}</span>
+              </div>
+              {/* <TourMap 
+                startLocation={tour.startLocation}
+                endLocation={tour.endLocation}
+                className="mt-4"
+              /> */}
             </div>
 
             {/* Experience Section */}
