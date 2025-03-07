@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import ResponsiveNav from "@/components/layouts/Navbar/ResponsiveNav";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 
 const font = Poppins({
@@ -24,8 +23,11 @@ export default function RootLayout({
       <body
         className={`${font.className} antialiased`}
       >
-        <ResponsiveNav/>
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </main>
+        </div>
       </body>
     </html>
   );

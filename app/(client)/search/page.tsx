@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Tour, TourCard } from '@/components/features/tour/TourCard';
 import TravelCalendar from '@/components/features/calendar/TravelCalendar';
+import { TourCard, Tour } from '@/components/(client)/features/tour/TourCard';
 
 // This would typically come from an API based on search params
 const properties = [

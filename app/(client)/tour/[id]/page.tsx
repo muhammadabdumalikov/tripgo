@@ -2,8 +2,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { Calendar, Clock, MapPin, Star, Users, Shield, Globe, ThumbsUp } from 'lucide-react';
-import BookButton from '@/components/features/tour/BookButton';
-import FavoriteButton from '@/components/features/tour/FavoriteButton';
+import BookButton from '@/components/(client)/features/tour/BookButton';
+import FavoriteButton from '@/components/(client)/features/tour/FavoriteButton';
 // import TourMap from '@/components/features/tour/TourMap';
 
 interface Tour {

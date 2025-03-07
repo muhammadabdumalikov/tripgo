@@ -1,6 +1,6 @@
+import SearchBox from '@/components/shared/ui/SearchBox'
 import Link from 'next/link'
 import React from 'react'
-import SearchBox from '@/components/common/SearchBox'
 
 const Hero = () => {
   return (

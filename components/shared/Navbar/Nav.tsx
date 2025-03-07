@@ -1,15 +1,15 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import SearchBox from '@/components/common/SearchBox';
 import Link from 'next/link';
 import Image from 'next/image';
+import SearchBox from '../ui/SearchBox';
 
 type Props = {
   openNav: () => void;
 };
 
-const Nav = ({ }: Props) => {
+const Nav = ({  }: Props) => {
   const [navBg, setNavBg] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === '/';

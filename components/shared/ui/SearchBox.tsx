@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import LocationSearch from '../features/home/Hero/LocationSearch';
+import LocationSearch from '@/components/features/home/Hero/LocationSearch';
 
 interface SearchBoxProps {
   variant?: 'search' | 'default' | 'compact';
