@@ -2,25 +2,29 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Mail, Phone, Building2, User, Lock } from 'lucide-react';
 
 export default function OrganizerRegister() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    companyName: '',
-    password: '',
-    confirmPassword: '',
-    agreeToTerms: false
+    firstName: 'John',
+    lastName: 'Smith',
+    email: 'john.smith@adventuretours.com',
+    phone: '+1 (555) 123-4567',
+    companyName: 'Adventure Tours & Travel Co.',
+    password: 'Test@12345',
+    confirmPassword: 'Test@12345',
+    agreeToTerms: true
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
+    // TODO: Implement actual registration logic here
     console.log('Form submitted:', formData);
+    // For development, directly redirect to dashboard
+    router.push('/dashboard');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,7 +242,7 @@ export default function OrganizerRegister() {
             {/* Login Link */}
             <p className="text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/organizer/login" className="text-[#febd2d] hover:text-[#ffc94d]">
+              <Link href="/login" className="text-[#febd2d] hover:text-[#ffc94d]">
                 Log in
               </Link>
             </p>

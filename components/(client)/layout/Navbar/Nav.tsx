@@ -9,7 +9,7 @@ type Props = {
   openNav: () => void;
 };
 
-const Nav = ({ }: Props) => {
+const Nav = ({ openNav }: Props) => {
   const [navBg, setNavBg] = useState(false);
   const pathname = usePathname();
   const isHomePage = pathname === '/';
@@ -29,9 +29,9 @@ const Nav = ({ }: Props) => {
         ? navBg ? 'bg-white shadow-md' : 'bg-transparent'
         : 'bg-white'
       } transition-all duration-200 h-[12vh] z-[1000] fixed w-full`}>
-      <div className='flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto'>
+      <div className='flex items-center h-full w-[90%] xl:w-[80%] mx-auto'>
         {/* LOGO */}
-        <Link href="/" className='flex items-center space-x-3'>
+        <Link href="/" className='flex items-center space-x-3 flex-shrink-0'>
           <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-col ${isHomePage ? 'bg-white' : 'bg-transparent'}`}>
             <Image 
               src="/images/Logo.svg" 
@@ -47,14 +47,21 @@ const Nav = ({ }: Props) => {
             } font-bold`}>Tripgo</h1>
         </Link>
 
-        {/* SearchBox */}
-        <div className='hidden md:flex flex-1 max-w-3xl mx-8'>
-          <SearchBox variant={pathname === '/search' ? 'compact' : 'default'} />
+        {/* SearchBox - Centered and Stretched */}
+        <div className='hidden md:flex justify-center px-8 flex-1'>
+          <div className='w-full max-w-3xl'>
+            <SearchBox variant={pathname === '/search' ? 'compact' : 'default'} />
+          </div>
         </div>
 
-        {/* Download App Button */}
-        <button className='hidden md:block px-8 py-3 text-black text-base bg-[#febd2d] hover:bg-[#e5a827] transition-colors rounded-full'>
-          Download App
+        {/* Mobile Menu Button */}
+        <button
+          onClick={openNav}
+          className="md:hidden text-gray-500 hover:text-gray-700 flex-shrink-0"
+        >
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
         </button>
       </div>
     </div>

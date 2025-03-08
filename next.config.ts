@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: "9000", // Add port if required
         pathname: "/travelapp/**", // Adjust the path to match your files
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
   async rewrites() {

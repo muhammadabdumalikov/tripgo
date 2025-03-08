@@ -145,6 +145,51 @@ const Footer = () => {
         </div>
       </div>
 
+      {/* Mobile App Section - Now between main content and bottom bar */}
+      <div className="border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="md:w-1/2 space-y-4">
+              <h2 className="text-xl font-semibold text-white">Download TripGo App</h2>
+              <p className="text-gray-400 text-sm max-w-md">
+                Book tours, manage trips, and discover new destinations on the go.
+              </p>
+              <div className="flex flex-row gap-3">
+                <Link href="#" className="transition-transform hover:scale-105">
+                  <Image
+                    src="/images/appstore.png"
+                    alt="Download on App Store"
+                    width={100}
+                    height={32}
+                    className="h-[32px] w-auto"
+                  />
+                </Link>
+                <Link href="#" className="transition-transform hover:scale-105">
+                  <Image
+                    src="/images/playmarket.png"
+                    alt="Get it on Google Play"
+                    width={100}
+                    height={32}
+                    className="h-[32px] w-auto"
+                  />
+                </Link>
+              </div>
+            </div>
+            <div className="md:w-auto flex justify-center md:justify-end">
+              <div className="relative w-[160px] h-[320px] transform rotate-[-5deg] hover:rotate-0 transition-transform duration-300">
+                <Image
+                  src="/images/iphone-16.png"
+                  alt="TripGo Mobile App"
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
