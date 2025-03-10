@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard, 
   User, 
@@ -31,6 +32,25 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      // Call your logout API endpoint if needed
+      await fetch('http://37.60.231.13:3001/api/auth/admin/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Always perform local logout even if API call fails
+      logout();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -55,10 +75,13 @@ export default function DashboardLayout({
               </Link>
             </div>
             <div className="flex items-center">
-              <Link href="/login" className="flex items-center text-gray-700 hover:text-gray-900">
+              <button
+                onClick={handleLogout}
+                className="flex items-center px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
                 <LogOut className="w-5 h-5 mr-2" />
-                Logout
-              </Link>
+                <span>Logout</span>
+              </button>
             </div>
           </div>
         </div>

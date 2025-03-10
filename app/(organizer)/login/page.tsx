@@ -1,142 +1,176 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/utils/api';
 
-export default function OrganizerLogin() {
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  success: boolean;
+}
+
+export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    email: 'john.smith@adventuretours.com',
-    password: 'Test@12345',
-    rememberMe: true
+    login: 'admin@tripgo.com',
+    password: 'admin123',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement actual login logic here
-    console.log('Login submitted:', formData);
-    // For development, directly redirect to dashboard
-    router.push('/dashboard');
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const { data, error } = await api.post<LoginResponse>('/auth/admin/login', formData, {
+        requiresAuth: false,
+      });
+
+      if (error || !data) {
+        throw new Error(error || 'Login failed');
+      }
+
+      if (data.success) {
+        login(data.accessToken, data.refreshToken);
+        router.push('/dashboard');
+      } else {
+        throw new Error('Login failed');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-6">
-            <Image
-              src="/images/logo.svg"
-              alt="TripGo"
-              width={48}
-              height={48}
-              className="h-12 w-auto"
-            />
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-gray-600">
-            Log in to your organizer account
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Please sign in to your account
           </p>
         </div>
 
-        {/* Login Form */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+              <label htmlFor="login" className="block text-sm font-medium text-gray-700">
+                login address
               </label>
-              <div className="relative">
+              <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  id="login"
+                  name="login"
+                  type="login"
+                  value={formData.login}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d] text-sm"
                   required
+                  className="appearance-none block w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-[#febd2d] focus:border-[#febd2d] sm:text-sm"
+                  placeholder="Enter your login"
                 />
               </div>
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <div className="relative">
+              <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="password"
                   id="password"
                   name="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d] text-sm"
                   required
+                  className="appearance-none block w-full pl-10 pr-10 px-3 py-2 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-[#febd2d] focus:border-[#febd2d] sm:text-sm"
+                  placeholder="Enter your password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <Eye className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-[#febd2d] focus:ring-[#febd2d] border-gray-300 rounded"
-                />
-                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-600">
-                  Remember me
-                </label>
-              </div>
-              <Link
-                href="/forgot-password"
-                className="text-sm text-[#febd2d] hover:text-[#ffc94d]"
-              >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-[#febd2d] focus:ring-[#febd2d] border-gray-300 rounded"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                Remember me
+              </label>
+            </div>
+
+            <div className="text-sm">
+              <Link href="#" className="font-medium text-[#febd2d] hover:text-[#ffc94d]">
                 Forgot password?
               </Link>
             </div>
+          </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-[#febd2d] text-gray-900 font-medium px-4 py-3 rounded-lg hover:bg-[#ffc94d] transition-colors"
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-[#febd2d] text-gray-900 font-medium px-4 py-3 rounded-lg hover:bg-[#ffc94d] transition-colors ${
+              loading ? 'opacity-75 cursor-not-allowed' : ''
+            }`}
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+
+          <p className="text-center text-sm text-gray-600">
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/register"
+              className="font-medium text-[#febd2d] hover:text-[#ffc94d]"
             >
-              Log In
-            </button>
-
-            {/* Register Link */}
-            <p className="text-center text-sm text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/register" className="text-[#febd2d] hover:text-[#ffc94d]">
-                Register as organizer
-              </Link>
-            </p>
-          </form>
-        </div>
+              Create Account
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );

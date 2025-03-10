@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 
 const font = Poppins({
@@ -9,8 +11,8 @@ const font = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "Tripgo",
-  description: "Travel with us",
+  title: "TripGo - Your Travel Companion",
+  description: "Discover and book amazing tours and travel experiences.",
 };
 
 export default function RootLayout({
@@ -23,11 +25,17 @@ export default function RootLayout({
       <body
         className={`${font.className} antialiased`}
       >
-        <div className="flex flex-col min-h-screen">
-          <main className="flex-grow">
-            <ReactQueryProvider>{children}</ReactQueryProvider>
-          </main>
-        </div>
+        <ReactQueryProvider>
+          <AuthProvider>
+            <ProtectedRoute>
+              <div className="flex flex-col min-h-screen">
+                <main className="flex-grow">
+                  {children}
+                </main>
+              </div>
+            </ProtectedRoute>
+          </AuthProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
