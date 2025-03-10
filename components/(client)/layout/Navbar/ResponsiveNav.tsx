@@ -5,12 +5,11 @@ import MobileNav from './MobileNav'
 
 const ResponsiveNav = () => {
   const [showNav, setShowNav] = useState(false);
-  const handShowNav = () => setShowNav(true);
   const handCloseShowNav = () => setShowNav(false);
 
   return (
     <div>
-      <Nav openNav={handShowNav} />
+      <Nav/>
       <MobileNav closeNav={handCloseShowNav} showNav={showNav} />
     </div>
   )

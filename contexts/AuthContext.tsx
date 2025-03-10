@@ -98,11 +98,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error('No refresh token');
       }
 
-      const { data, error } = await api.post('/auth/admin/refresh', { refreshToken }, {
+      const { data } = await api.post<{ accessToken: string }>('/auth/admin/refresh', { refreshToken }, {
         requiresAuth: false
       });
 
-      if (error || !data) {
+      if (!data?.accessToken) {
         throw new Error('Token refresh failed');
       }
 
