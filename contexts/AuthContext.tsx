@@ -74,11 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const accessToken = localStorage.getItem('accessToken');
       if (accessToken) {
         // Try to call logout API
-        await api.post('/auth/admin/logout', null, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
+        await api.post('/auth/admin/logout', null, false);
       }
     } catch {
       // Ignore API errors during logout
@@ -98,9 +94,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error('No refresh token');
       }
 
-      const { data } = await api.post<{ accessToken: string }>('/auth/admin/refresh', { refreshToken }, {
-        requiresAuth: false
-      });
+      const { data } = await api.post<{ accessToken: string }>('/auth/admin/refresh', { refreshToken }, true);
 
       if (!data?.accessToken) {
         throw new Error('Token refresh failed');

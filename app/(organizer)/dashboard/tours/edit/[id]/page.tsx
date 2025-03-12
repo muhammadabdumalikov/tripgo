@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { 
   MapPin, 
@@ -13,9 +14,13 @@ import {
   X,
   Trash2,
   Globe,
-  Loader2
+  Loader2,
+  ArrowLeft
 } from 'lucide-react';
 import { api } from '@/utils/api';
+import { Tour } from '@/types/tour';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type Language = 'en' | 'ru' | 'uz';
 
@@ -60,18 +65,32 @@ interface TourForm {
   excluded: string[];
 }
 
-export default function CreateTourPage() {
+export default function EditTourPage() {
+  const params = useParams();
   const router = useRouter();
+  const tourId = params.id as string;
+
+  const { data: tourData, isLoading: isLoadingTour, error: tourError } = useQuery({
+    queryKey: ['tour', tourId],
+    queryFn: async () => {
+      const response = await api.post<Tour>('/tour/get-by-id', { id: tourId });
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch tour details');
+      }
+      return response.data;
+    },
+  });
+
   const [formData, setFormData] = useState<TourForm>({
     title: {
-      en: 'test',
-      ru: 'test',
-      uz: 'test'
+      en: '',
+      ru: '',
+      uz: ''
     },
     description: {
-      en: 'test',
-      ru: 'test',
-      uz: 'test'
+      en: '',
+      ru: '',
+      uz: ''
     },
     location: 1,
     duration: '1 day',
@@ -82,10 +101,31 @@ export default function CreateTourPage() {
     end_date: '2025-01-01',
     status: 1,
     images: [],
-    route: [{ day: 'Day 1', title: 'test', description: 'test' }],
+    route: [{ day: 'Day 1', title: '', description: '' }],
     included: ['Professional guide', 'Transportation'],
     excluded: ['Personal expenses', 'Travel insurance']
   });
+
+  useEffect(() => {
+    if (tourData) {
+      setFormData({
+        title: tourData.title,
+        description: tourData.description,
+        location: tourData.location,
+        duration: tourData.duration,
+        seats: tourData.seats,
+        price: Number(tourData.price),
+        sale_price: Number(tourData.sale_price),
+        start_date: tourData.start_date,
+        end_date: tourData.end_date,
+        status: tourData.status,
+        images: tourData.files?.map(file => file.url) || [],
+        route: tourData.route_json || [{ day: 'Day 1', title: '', description: '' }],
+        included: tourData.included_json || ['Professional guide', 'Transportation'],
+        excluded: tourData.excluded_json || ['Personal expenses', 'Travel insurance']
+      });
+    }
+  }, [tourData]);
 
   const [dragActive, setDragActive] = useState(false);
   const [activeLanguage, setActiveLanguage] = useState<Language>('en');
@@ -172,6 +212,7 @@ export default function CreateTourPage() {
       images: prev.images.filter((_, i) => i !== index)
     }));
   };
+
   const addRouteDay = () => {
     setFormData(prev => ({
       ...prev,
@@ -198,7 +239,7 @@ export default function CreateTourPage() {
   const removeRouteItem = (indexToRemove: number) => {
     setFormData(prev => ({
       ...prev,
-      itinerary: prev.route.filter((_, index) => index !== indexToRemove)
+      route: prev.route.filter((_, index) => index !== indexToRemove)
     }));
   };
 
@@ -208,17 +249,20 @@ export default function CreateTourPage() {
     setError(null);
 
     try {
-      const response = await api.post('/admin/tour/create', formData);
+      const response = await api.post('/admin/tour/update', {
+        id: tourId,
+        ...formData
+      });
       
       if (!response.success) {
-        throw new Error(response.error || 'Failed to create tour');
+        throw new Error(response.error || 'Failed to update tour');
       }
 
-      console.log('Tour created successfully:', response.data);
+      console.log('Tour updated successfully:', response.data);
       router.push('/dashboard/tours');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while creating the tour');
-      console.error('Error creating tour:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred while updating the tour');
+      console.error('Error updating tour:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -245,10 +289,59 @@ export default function CreateTourPage() {
     </div>
   );
 
+  if (isLoadingTour) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (tourError) {
+    return (
+      <div className="p-4">
+        <div className="flex items-center gap-4 mb-6">
+          <Link href="/dashboard/tours">
+            <Button variant="outline" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold">Error</h1>
+        </div>
+        <p className="text-red-500">
+          {tourError instanceof Error ? tourError.message : 'Failed to load tour details'}
+        </p>
+      </div>
+    );
+  }
+
+  if (!tourData) {
+    return (
+      <div className="p-4">
+        <div className="flex items-center gap-4 mb-6">
+          <Link href="/dashboard/tours">
+            <Button variant="outline" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold">Tour Not Found</h1>
+        </div>
+        <p className="text-gray-500">The requested tour could not be found.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-6">Create New Tour</h1>
+        <div className="flex items-center gap-4 mb-6">
+          <Link href="/dashboard/tours">
+            <Button variant="outline" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold">Edit Tour</h1>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
@@ -368,7 +461,7 @@ export default function CreateTourPage() {
                 <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="number"
-                  name="group_size"
+                  name="seats"
                   value={formData.seats}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
@@ -405,11 +498,10 @@ export default function CreateTourPage() {
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="number"
-                  name="price"
+                  name="sale_price"
                   value={formData.sale_price}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
-                  required
                   min="0"
                   step="0.01"
                 />
@@ -424,7 +516,7 @@ export default function CreateTourPage() {
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="date"
-                  name="startDate"
+                  name="start_date"
                   value={formData.start_date}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
@@ -441,7 +533,7 @@ export default function CreateTourPage() {
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="date"
-                  name="endDate"
+                  name="end_date"
                   value={formData.end_date}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
@@ -611,10 +703,10 @@ export default function CreateTourPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  Updating...
                 </>
               ) : (
-                'Create Tour'
+                'Update Tour'
               )}
             </button>
           </div>
@@ -622,4 +714,4 @@ export default function CreateTourPage() {
       </div>
     </div>
   );
-} 
+}

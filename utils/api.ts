@@ -1,49 +1,20 @@
-const API_BASE_URL = 'http://37.60.231.13:3001/api';
+import { getAccessToken, setAccessToken, clearTokens } from '@/utils/token';
 
-interface ApiResponse<T> {
+const API_BASE_URL = 'http://localhost:3001/api'; //'http://37.60.231.13:3001/api';
+
+interface ApiResponse<T = unknown> {
+  success: boolean;
   data?: T;
   error?: string;
 }
 
-interface RequestOptions extends RequestInit {
-  requiresAuth?: boolean;
-}
-
-async function handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
-  const data = await response.json();
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      // Token expired, try to refresh
-      const newToken = await refreshToken();
-      if (newToken) {
-        // Retry the original request with the new token
-        return makeRequest(response.url, {
-          ...response,
-          headers: {
-            ...response.headers,
-            Authorization: `Bearer ${newToken}`,
-          },
-        });
-      }
-    }
-    throw new Error(data.message || 'An error occurred');
-  }
-
-  return { data };
-}
-
 async function refreshToken(): Promise<string | null> {
-  const refreshToken = localStorage.getItem('refreshToken');
-  if (!refreshToken) return null;
-
   try {
     const response = await fetch(`${API_BASE_URL}/auth/admin/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ refreshToken }),
     });
 
     if (!response.ok) {
@@ -51,68 +22,125 @@ async function refreshToken(): Promise<string | null> {
     }
 
     const data = await response.json();
-    localStorage.setItem('accessToken', data.accessToken);
+    setAccessToken(data.accessToken);
     return data.accessToken;
   } catch (error) {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    window.location.href = '/login';
+    console.error('Token refresh failed:', error);
+    clearTokens();
+    window.location.href = '/organizer/login';
     return null;
   }
 }
 
-async function makeRequest<T>(
-  endpoint: string,
-  options: RequestOptions = {}
-): Promise<ApiResponse<T>> {
-  const { requiresAuth = true, ...fetchOptions } = options;
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
-
-  if (requiresAuth) {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      throw new Error('No access token available');
-    }
-
-    fetchOptions.headers = {
-      ...fetchOptions.headers,
-      Authorization: `Bearer ${token}`,
-    };
-  }
-
-  fetchOptions.headers = {
-    'Content-Type': 'application/json',
-    ...fetchOptions.headers,
-  };
-
-  try {
-    const response = await fetch(url, fetchOptions);
-    return handleResponse<T>(response);
-  } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'An error occurred',
-    };
-  }
-}
-
 export const api = {
-  get: <T>(endpoint: string, options?: RequestOptions) =>
-    makeRequest<T>(endpoint, { ...options, method: 'GET' }),
+  get: async <T>(endpoint: string): Promise<ApiResponse<T>> => {
+    try {
+      const accessToken = getAccessToken();
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-  post: <T>(endpoint: string, data?: any, options?: RequestOptions) =>
-    makeRequest<T>(endpoint, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-  put: <T>(endpoint: string, data?: any, options?: RequestOptions) =>
-    makeRequest<T>(endpoint, {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
+      const data = await response.json();
+      return { success: true, data };
+    } catch (error) {
+      console.error('API Error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'An error occurred'
+      };
+    }
+  },
 
-  delete: <T>(endpoint: string, options?: RequestOptions) =>
-    makeRequest<T>(endpoint, { ...options, method: 'DELETE' }),
+  post: async <T>(endpoint: string, body: object | null, requiresAuth = true): Promise<ApiResponse<T>> => {
+    try {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': '',
+      };
+
+      if (requiresAuth) {
+        const accessToken = getAccessToken();
+        if (!accessToken) {
+          throw new Error('No access token available');
+        }
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      });
+
+      // If unauthorized and requires auth, try to refresh token
+      if (requiresAuth && response.status === 401) {
+        const newToken = await refreshToken();
+        if (newToken) {
+          // Retry the request with new token
+          const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: 'POST',
+            headers: {
+              ...headers,
+              'Authorization': `Bearer ${newToken}`,
+            },
+            body: JSON.stringify(body),
+          });
+
+          if (!retryResponse.ok) {
+            throw new Error(`HTTP error! status: ${retryResponse.status}`);
+          }
+
+          const data = await retryResponse.json();
+          return { success: true, data };
+        }
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return { success: true, data };
+    } catch (error) {
+      console.error('API Error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'An error occurred'
+      };
+    }
+  },
+
+  delete: async <T>(endpoint: string): Promise<ApiResponse<T>> => {
+    try {
+      const accessToken = getAccessToken();
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return { success: true, data };
+    } catch (error) {
+      console.error('API Error:', error);
+      return { 
+        success: false,
+        error: error instanceof Error ? error.message : 'An error occurred'
+      };
+    }
+  },
 }; 

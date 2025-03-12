@@ -38,9 +38,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const { data, error } = await api.post<LoginResponse>('/auth/admin/login', formData, {
-        requiresAuth: false,
-      });
+      const { data, error } = await api.post<LoginResponse>('/auth/admin/login', formData, false);
 
       if (error || !data) {
         throw new Error(error || 'Login failed');
