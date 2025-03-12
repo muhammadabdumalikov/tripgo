@@ -1,6 +1,7 @@
 import { getAccessToken, setAccessToken, clearTokens } from '@/utils/token';
 
-const API_BASE_URL = 'http://37.60.231.13:3001/api'; //'http://37.60.231.13:3001/api';
+const API_BASE_URL = 'http://37.60.231.13:3001/api';
+// const API_BASE_URL = 'http://localhost:3001/api'; //'http://37.60.231.13:3001/api';
 
 interface ApiResponse<T = unknown> {
   success: boolean;
