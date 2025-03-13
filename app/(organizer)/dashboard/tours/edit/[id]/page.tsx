@@ -21,6 +21,7 @@ import { api, API_BASE_URL } from '@/utils/api';
 import { Tour } from '@/types/tour';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { getProxiedImageUrl } from '@/utils/image';
 
 type Language = 'en' | 'ru' | 'uz';
 
@@ -711,7 +712,7 @@ export default function EditTourPage() {
                     <div key={file.url} className="relative group">
                       <div className="relative h-32 rounded-lg overflow-hidden">
                         <Image
-                          src={file.url}
+                          src={getProxiedImageUrl(file.url)}
                           alt={`Tour image ${index + 1}`}
                           fill
                           className="object-cover"

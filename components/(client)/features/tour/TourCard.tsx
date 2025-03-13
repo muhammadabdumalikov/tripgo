@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaStar } from "react-icons/fa";
+import { getProxiedImageUrl } from '@/utils/image';
 
 export interface Tour {
   id: number,
@@ -40,10 +41,10 @@ export const TourCard = ({
         {/* Image Section */}
         <div className="relative w-full h-56 flex-shrink-0 rounded-t-3xl overflow-hidden">
           <Image
-            src={tour.files?.find((f) => f.type === "extra")?.url || "/placeholder.jpg"}
+            src={getProxiedImageUrl(tour.files?.find((f) => f.type === "extra")?.url || "/placeholder.jpg")}
             alt={tour.title}
             layout="fill"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
 
           {/* Discount Box */}
@@ -54,10 +55,10 @@ export const TourCard = ({
           {/* Organizer Logo */}
           <div className="absolute bottom-3 right-3 w-10 h-10 bg-neutral-50 rounded-full flex items-center justify-center">
             <Image
-              src={tour.organizer_logo || "/logo-placeholder.png"}
+              src={getProxiedImageUrl(tour.organizer_logo || "/logo-placeholder.png")}
               alt="Organizer"
-              width={38}
-              height={38}
+              width={32}
+              height={32}
               className="rounded-full"
             />
           </div>

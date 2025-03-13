@@ -9,6 +9,8 @@ import { Card } from '@/components/ui/card';
 import { Loader2, MapPin, Clock, Users, Star, Plus, Pencil } from 'lucide-react';
 import { TourFilters } from './components/TourFilters';
 import Link from 'next/link';
+import Image from 'next/image';
+import { getProxiedImageUrl } from '@/utils/image';
 
 export default function ToursPage() {
   const [filters, setFilters] = useState<TourListFilters>({
@@ -107,10 +109,11 @@ export default function ToursPage() {
                 <div className="relative">
                   {tour.files?.length > 0 && tour.files[0] && (
                     <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                      <img
-                        src={tour.files[0].url}
+                      <Image
+                        src={getProxiedImageUrl(tour.files[0].url)}
                         alt={tour.title.uz}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
                       />
                       {tour.sale_price && (
                         <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-sm font-medium">

@@ -4,10 +4,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "37.60.231.13",
-        port: "9000", // Add port if required
-        pathname: "/travelapp/**", // Adjust the path to match your files
+        protocol: "https",
+        hostname: "tripgo-urb1.vercel.app",
+        port: "",
+        pathname: "/img/**",
       },
       {
         protocol: "https",
@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
       {
         source: "/api/:path*",
         destination: "http://37.60.231.13:3001/api/:path*",
+      },
+      {
+        source: "/img/:path*",
+        destination: "http://37.60.231.13:9000/travelapp/:path*",
       },
     ];
   },
