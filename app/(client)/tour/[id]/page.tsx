@@ -71,7 +71,6 @@ export default async function TourDetails({ params }: PageProps) {
   
   // Fetch tour data
   const response = await api.post<Tour>('/tour/get-by-id', { id }, false);
-  console.log(response);
   if (!response.success || !response.data) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
