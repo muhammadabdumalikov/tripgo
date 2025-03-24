@@ -2,27 +2,24 @@
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {TourCard, Tour} from "../TourCard";
+import { api } from "@/utils/api";
 
 type Response = {
   data: Tour[];
 };
-
-
-async function fetchTours(): Promise<Response> {
-  const API_URL = "/api/tour/list"; // Calls the Next.js proxy instead
-
-  const res = await fetch(API_URL, { method: 'post', body: JSON.stringify({}), headers: {'X-Lang': 'uz'}}); // Replace with your API endpoint
-  if (!res.ok) throw new Error("Failed to fetch");
-  return res.json();
-}
-
 
 const RecommendedTours = () => {
   const router = useRouter();
 
    const { data, isLoading, error } = useQuery({
     queryKey: ["tours"],
-    queryFn: fetchTours,
+    queryFn: async () => {
+      const response = await api.post<Response>('/tour/list',{}, false);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch tours');
+      }
+      return response.data;
+    },
   });
 
   if (isLoading) return <p>Loading...</p>;

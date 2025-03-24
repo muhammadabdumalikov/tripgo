@@ -35,7 +35,7 @@ export default function ToursPage() {
       return response.data;
     },
   });
-
+  
   const handleFilterChange = (key: keyof TourListFilters, value: string | number | undefined) => {
     setFilters(prev => ({
       ...prev,
@@ -111,7 +111,7 @@ export default function ToursPage() {
                     <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
                       <Image
                         src={getProxiedImageUrl(tour.files[0].url)}
-                        alt={tour.title.uz}
+                        alt={tour.title as unknown as string}
                         fill
                         className="object-cover"
                       />

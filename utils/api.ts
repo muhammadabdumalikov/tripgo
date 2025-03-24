@@ -1,9 +1,9 @@
 import { getAccessToken, setAccessToken, clearTokens } from '@/utils/token';
 
 export const API_BASE_URL = 'http://37.60.231.13:3001/api';
-// export const API_BASE_URL = 'http://localhost:3001/api';
+// For local development use: export const API_BASE_URL = 'http://localhost:3001/api';
 
-interface ApiResponse<T = unknown> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -73,14 +73,13 @@ export const api = {
         }
         headers['Authorization'] = `Bearer ${accessToken}`;
       }
-      console.log(`${API_BASE_URL}${endpoint}`);
       
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers,
         body: JSON.stringify(body),
       });
-
+      
       // If unauthorized and requires auth, try to refresh token
       if (requiresAuth && response.status === 401) {
         const newToken = await refreshToken();
