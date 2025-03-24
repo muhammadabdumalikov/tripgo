@@ -1,7 +1,7 @@
 import { getAccessToken, setAccessToken, clearTokens } from '@/utils/token';
 
-export const API_BASE_URL = '/api';
-// export const API_BASE_URL = 'http://localhost:3001/api';
+// export const API_BASE_URL = '/api';
+export const API_BASE_URL = 'http://localhost:3001/api';
 
 interface ApiResponse<T = unknown> {
   success: boolean;
@@ -99,6 +99,7 @@ export const api = {
           }
 
           const data = await retryResponse.json();
+          
           return { success: true, data };
         }
       }

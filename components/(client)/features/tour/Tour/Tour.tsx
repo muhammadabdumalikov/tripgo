@@ -29,7 +29,7 @@ const RecommendedTours = () => {
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
 
   const onPressHandler = (item: Tour) => {
-    router.push(`/listing-details/${item.id}`);
+    router.push(`/tour/${item.id}`);
   };
 
   return (

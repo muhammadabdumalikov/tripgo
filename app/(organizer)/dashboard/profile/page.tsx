@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Camera, Globe } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Globe, Loader2, Camera, Check, X } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { api, API_BASE_URL } from '@/utils/api';
 import Image from 'next/image';
+import { getProxiedImageUrl } from '@/utils/image';
 
 type Language = 'en' | 'ru' | 'uz';
 
@@ -19,85 +22,166 @@ const languages: LanguageOption[] = [
 ];
 
 interface OrganizerProfile {
-  companyName: {
+  id: string;
+  status: number;
+  is_deleted: boolean;
+  created_at: string;
+  title: {
     en: string;
     ru: string;
     uz: string;
   };
-  description: {
+  description: null | {
     en: string;
     ru: string;
     uz: string;
   };
-  email: string;
   phone: string;
-  address: string;
-  website: string;
-  profileImage: string | null;
+  telegram_username: string;
+  password: string;
+  login: string;
+  rating: number;
+  files: Array<{
+    url: string;
+    name: string;
+    type: string;
+    size: number;
+  }>;
 }
 
 const ProfilePage = () => {
   const [activeLanguage, setActiveLanguage] = useState<Language>('en');
-  const [profile, setProfile] = useState<OrganizerProfile>({
-    companyName: {
-      en: 'Adventure Tours & Travel Co.',
-      ru: 'Adventure Tours & Travel Co.',
-      uz: 'Adventure Tours & Travel Co.'
+  const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedLogo, setSelectedLogo] = useState<{ file: File; preview: string } | null>(null);
+
+  const { data: organizerData, isLoading, error } = useQuery({
+    queryKey: ['organizer'],
+    queryFn: async () => {
+      const response = await api.post<OrganizerProfile>('/admin/organizer/me', {}, true);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to fetch organizer data');
+      }
+      return response.data;
     },
-    description: {
-      en: 'We are a leading adventure tourism company specializing in unique outdoor experiences and cultural expeditions. With over 10 years of experience, we provide unforgettable journeys that combine adventure, safety, and comfort.',
-      ru: 'We are a leading adventure tourism company specializing in unique outdoor experiences and cultural expeditions. With over 10 years of experience, we provide unforgettable journeys that combine adventure, safety, and comfort.',
-      uz: 'We are a leading adventure tourism company specializing in unique outdoor experiences and cultural expeditions. With over 10 years of experience, we provide unforgettable journeys that combine adventure, safety, and comfort.'
-    },
-    email: 'contact@adventuretours.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Adventure Street, Tourism Valley, CA 94105',
-    website: 'https://www.adventuretours.com',
-    profileImage: '/images/reviewer.png',
   });
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [profile, setProfile] = useState<OrganizerProfile | null>(null);
+
+  // Update profile state when data is loaded
+  React.useEffect(() => {
+    if (organizerData) {
+      setProfile(organizerData);
+    }
+  }, [organizerData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!profile) return;
+
     const { name, value } = e.target;
-    
+
     // Handle multi-language fields
     if (name.includes('.')) {
       const [field, lang] = name.split('.');
-      setProfile(prev => ({
-        ...prev,
-        [field]: {
-          ...prev[field as keyof Pick<OrganizerProfile, 'companyName' | 'description'>],
-          [lang]: value
-        }
-      }));
-    } else {
-      setProfile(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile(prev => ({
+      setProfile(prev => {
+        if (!prev) return prev;
+        return {
           ...prev,
-          profileImage: reader.result as string
-        }));
-      };
-      reader.readAsDataURL(file);
+          [field]: {
+            ...prev[field as keyof Pick<OrganizerProfile, 'title' | 'description'>],
+            [lang]: value
+          }
+        };
+      });
+    } else {
+      setProfile(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          [name]: value
+        };
+      });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement profile update logic
-    console.log('Profile data:', profile);
-    setIsEditing(false);
+    if (!profile) return;
+
+    try {
+      const response = await api.post('/admin/organizer/update', profile);
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to update profile');
+      }
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      // TODO: Show error message to user
+    }
+  };
+
+  const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Create a local URL for the file
+    const objectUrl = URL.createObjectURL(file);
+    setSelectedLogo({
+      file,
+      preview: objectUrl
+    });
+  };
+
+  // Cleanup object URL when component unmounts or when selectedLogo changes
+  React.useEffect(() => {
+    return () => {
+      if (selectedLogo?.preview) {
+        URL.revokeObjectURL(selectedLogo.preview);
+      }
+    };
+  }, [selectedLogo]);
+
+  const handleLogoUpload = async () => {
+    if (!selectedLogo?.file || !profile) return;
+
+    const formData = new FormData();
+    formData.append('file', selectedLogo.file, selectedLogo.file.name);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/file-router/simple-upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const data = await response.json();
+
+      const { url, name, size } = data;
+
+      // Update profile with new logo
+      const newFiles = profile.files.filter(f => f.type !== 'logo').concat({
+        url,
+        name,
+        type: 'logo',
+        size,
+      });
+
+      setProfile(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          files: newFiles
+        };
+      });
+      
+      setSelectedLogo(null);
+    } catch (err) {
+      console.error('Error uploading logo:', err);
+      // TODO: Show error message to user
+    }
   };
 
   const LanguageTabs = () => (
@@ -109,8 +193,8 @@ const ProfilePage = () => {
           onClick={() => setActiveLanguage(lang.code)}
           className={`
             px-4 py-2 rounded-t-lg flex items-center space-x-2 transition-colors
-            ${activeLanguage === lang.code 
-              ? 'bg-[#febd2d] text-gray-900 border-b-2 border-[#febd2d]' 
+            ${activeLanguage === lang.code
+              ? 'bg-[#febd2d] text-gray-900 border-b-2 border-[#febd2d]'
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
             }
           `}
@@ -122,47 +206,97 @@ const ProfilePage = () => {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="p-4">
+        <p className="text-red-500">
+          {error instanceof Error ? error.message : 'Failed to load organizer profile'}
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-6">Organizer Profile</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Profile Image Upload */}
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100">
-                {profile.profileImage ? (
-                  <Image
-                    src={profile.profileImage}
-                    alt="Profile"
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Camera className="w-8 h-8 text-gray-400" />
-                  </div>
-                )}
-              </div>
-              <label
-                htmlFor="profileImage"
-                className="absolute bottom-0 right-0 bg-[#febd2d] p-2 rounded-full cursor-pointer hover:bg-[#e5a827] transition-colors"
-              >
-                <Camera className="w-4 h-4 text-white" />
-                <input
-                  type="file"
-                  id="profileImage"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                  disabled={!isEditing}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative w-16 h-16 group">
+              <div className="rounded-full overflow-hidden border border-gray-200 w-full h-full relative">
+                <Image
+                  src={selectedLogo?.preview || getProxiedImageUrl(profile.files?.find(f => f.type === 'logo')?.url || '/placeholder.jpg')}
+                  alt="Organization Logo"
+                  fill
+                  sizes="100px"
+                  className="object-cover"
+                  priority
                 />
-              </label>
+              </div>
+              {isEditing && !selectedLogo && (
+                <>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleLogoSelect}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Camera className="w-6 h-6 text-white" />
+                  </button>
+                </>
+              )}
+              {selectedLogo && (
+                <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleLogoUpload}
+                    className="p-1.5 bg-green-500 rounded-full text-white hover:bg-green-600 transition-colors"
+                    title="Confirm new logo"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      URL.revokeObjectURL(selectedLogo.preview);
+                      setSelectedLogo(null);
+                    }}
+                    className="p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+                    title="Cancel"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
+            <h1 className="text-2xl font-bold">Organizer Profile</h1>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              setIsEditing(!isEditing);
+              setSelectedLogo(null);
+            }}
+            className="px-4 py-2 bg-[#febd2d] text-gray-900 rounded-lg hover:bg-[#ffc94d]"
+          >
+            {isEditing ? 'Cancel' : 'Edit Profile'}
+          </button>
+        </div>
 
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Company Information */}
           <div className="space-y-6">
             {/* Company Name in multiple languages */}
@@ -176,7 +310,7 @@ const ProfilePage = () => {
                   <span>Multi-language input</span>
                 </div>
               </div>
-              
+
               <div className="border rounded-lg overflow-hidden">
                 <LanguageTabs />
                 <div className="p-4">
@@ -187,8 +321,8 @@ const ProfilePage = () => {
                     >
                       <input
                         type="text"
-                        name={`companyName.${lang.code}`}
-                        value={profile.companyName[lang.code]}
+                        name={`title.${lang.code}`}
+                        value={profile.title[lang.code] || ''}
                         onChange={handleInputChange}
                         placeholder={`Company name in ${lang.name}`}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
@@ -202,22 +336,6 @@ const ProfilePage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={profile.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
-                  placeholder="Enter email address"
-                  disabled={!isEditing}
-                  required
-                />
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Phone
@@ -235,31 +353,32 @@ const ProfilePage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Website
+                  Telegram Username
                 </label>
-                <input
-                  type="url"
-                  name="website"
-                  value={profile.website}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
-                  placeholder="Enter website URL"
-                  disabled={!isEditing}
-                />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">@https://t.me/</span>
+                  <input
+                    type="text"
+                    name="telegram_username"
+                    value={profile.telegram_username || ''}
+                    onChange={handleInputChange}
+                    className="w-full pl-[160px] pr-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
+                    placeholder="username"
+                    disabled={!isEditing}
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address
+                  Login
                 </label>
                 <input
                   type="text"
-                  name="address"
-                  value={profile.address}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
-                  placeholder="Enter company address"
-                  disabled={!isEditing}
+                  name="login"
+                  value={profile.login}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  disabled
                 />
               </div>
             </div>
@@ -286,7 +405,7 @@ const ProfilePage = () => {
                     >
                       <textarea
                         name={`description.${lang.code}`}
-                        value={profile.description[lang.code]}
+                        value={profile.description?.[lang.code] || ''}
                         onChange={handleInputChange}
                         placeholder={`Description in ${lang.name}`}
                         rows={4}
@@ -300,33 +419,17 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4">
-            {isEditing ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-[#febd2d] text-white rounded-lg hover:bg-[#e5a827] transition-colors"
-                >
-                  Save Changes
-                </button>
-              </>
-            ) : (
+          {/* Submit Button */}
+          {isEditing && (
+            <div className="flex justify-end">
               <button
-                type="button"
-                onClick={() => setIsEditing(true)}
-                className="px-6 py-2 bg-[#febd2d] text-white rounded-lg hover:bg-[#e5a827] transition-colors"
+                type="submit"
+                className="px-6 py-2 bg-[#febd2d] text-gray-900 rounded-lg hover:bg-[#ffc94d]"
               >
-                Edit Profile
+                Save Changes
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </form>
       </div>
     </div>
