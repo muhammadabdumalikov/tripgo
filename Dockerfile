@@ -1,25 +1,34 @@
 # Build stage
-FROM node:22-alpine AS build
+FROM node:20-alpine AS build
 WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
 
 # Install dependencies
-COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps
+RUN npm install
 
-# Copy ALL source files
+# Copy source code
 COPY . .
 
-# Build the project
+# Build the application
 RUN npm run build
 
-# Final stage (Production)
-FROM node:22-alpine
+# Production stage
+FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy only the necessary built files from the build stage
-COPY --from=build /app/dist ./dist
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies only
+RUN npm install --production
+
+# Copy built application from build stage
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+COPY --from=build /app/next.config.js ./
 COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./
 
 EXPOSE 3030
 CMD ["npm", "start"]
