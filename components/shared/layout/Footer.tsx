@@ -24,14 +24,14 @@ const Footer = () => {
             <div className="inline-flex bg-white rounded-xl p-2">
               <Image
                 src="/images/logo.svg"
-                alt="TripGo Logo"
+                alt="Trippo Logo"
                 width={40}
                 height={40}
                 className="h-8 w-auto"
               />
             </div>
             <p className="text-sm leading-relaxed">
-              Discover extraordinary destinations and create unforgettable memories with TripGo. 
+              Discover extraordinary destinations and create unforgettable memories with Trippo. 
               Your journey begins here.
             </p>
             <div className="flex items-center space-x-4">
@@ -81,7 +81,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-3 text-sm">
                 <Mail className="w-5 h-5 flex-shrink-0" />
-                <span>contact@tripgo.com</span>
+                <span>contact@trippo.com</span>
               </li>
             </ul>
           </div>
@@ -149,7 +149,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="md:w-1/2 space-y-4">
-              <h2 className="text-xl font-semibold text-white">Download TripGo App</h2>
+              <h2 className="text-xl font-semibold text-white">Download Trippo App</h2>
               <p className="text-gray-400 text-sm max-w-md">
                 Book tours, manage trips, and discover new destinations on the go.
               </p>
@@ -178,7 +178,7 @@ const Footer = () => {
               <div className="relative w-[160px] h-[320px] transform rotate-[-5deg] hover:rotate-0 transition-transform duration-300">
                 <Image
                   src="/images/iphone-16.png"
-                  alt="TripGo Mobile App"
+                  alt="Trippo Mobile App"
                   fill
                   className="object-contain drop-shadow-2xl"
                   priority
@@ -194,7 +194,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm">
-              © {new Date().getFullYear()} TripGo. All rights reserved.
+              © {new Date().getFullYear()} Trippo. All rights reserved.
             </p>
             <div className="flex items-center space-x-6">
               <Link href="#" className="text-sm hover:text-white transition-colors">

@@ -71,7 +71,7 @@ export default function DashboardLayout({
                 )}
               </button>
               <Link href="/dashboard" className="flex items-center space-x-3 ml-4">
-                <span className="text-xl font-bold text-gray-900">TripGo Organizer</span>
+                <span className="text-xl font-bold text-gray-900">Trippo Organizer</span>
               </Link>
             </div>
             <div className="flex items-center">

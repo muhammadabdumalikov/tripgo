@@ -31,7 +31,7 @@ const Nav = () => {
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-col ${isHomePage ? 'bg-white' : 'bg-transparent'}`}>
             <Image 
               src="/images/logo.svg" 
-              alt="Tripgo Logo"
+              alt="Trippo Logo"
               width={70}
               height={70}
               priority
@@ -40,7 +40,7 @@ const Nav = () => {
           <h1 className={`text-2xl md:text-3xl ${isHomePage
               ? navBg ? 'text-black' : 'text-white'
               : 'text-black'
-            } font-bold`}>Tripgo</h1>
+            } font-bold`}>Trippo</h1>
         </Link>
 
         {/* SearchBox - Centered and Stretched */}

@@ -43,7 +43,7 @@ export default function OrganizerRegister() {
           <Link href="/" className="inline-block mb-6">
             <Image
               src="/images/logo.svg"
-              alt="TripGo"
+              alt="Trippo"
               width={48}
               height={48}
               className="h-12 w-auto"

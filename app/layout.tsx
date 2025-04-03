@@ -11,7 +11,7 @@ const font = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "TripGo - Your Travel Companion",
+  title: "Trippo - Your Travel Companion",
   description: "Discover and book amazing tours and travel experiences.",
 };
 

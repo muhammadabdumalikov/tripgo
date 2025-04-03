@@ -20,7 +20,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    login: 'admin@tripgo.com',
+    login: 'admin@trippo.com',
     password: 'admin123',
   });
 

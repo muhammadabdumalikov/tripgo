@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "tripgo-urb1.vercel.app",
+        hostname: "trippo-urb1.vercel.app",
         port: "",
         pathname: "/img/**",
       },
