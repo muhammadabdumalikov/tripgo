@@ -41,7 +41,7 @@ interface LanguageOption {
 const languages: LanguageOption[] = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
   { code: 'ru', name: 'Russian', flag: '🇷🇺' },
-  { code: 'uz', name: 'Uzbek', flag: '🇿🇿' }
+  { code: 'uz', name: 'Uzbek', flag: '🇺🇿' }
 ];
 
 interface RoutePoint {
@@ -66,8 +66,8 @@ interface TourForm {
   location: number;
   duration: string;
   seats: number;
-  price: number;
-  sale_price: number;
+  price: number | string;
+  sale_price: number | string;
   start_date: string;
   end_date: string;
   status: number;
@@ -216,7 +216,7 @@ export default function EditTourPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+      
     // Handle multi-language fields
     if (name.includes('.')) {
       const [field, lang] = name.split('.');
@@ -640,7 +640,7 @@ export default function EditTourPage() {
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   required
                   min="0"
-                  step="0.01"
+                  step="1000"
                 />
               </div>
             </div>
@@ -658,7 +658,7 @@ export default function EditTourPage() {
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   min="0"
-                  step="0.01"
+                  step="1000"
                 />
               </div>
             </div>

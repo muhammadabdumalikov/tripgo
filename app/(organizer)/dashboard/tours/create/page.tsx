@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { 
   MapPin, 
@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/utils/api';
 import { Button } from '@/components/ui/button';
+import { Tour } from '@/types/tour';
 
 type Language = 'en' | 'ru' | 'uz';
 
@@ -30,12 +31,12 @@ interface LanguageOption {
 const languages: LanguageOption[] = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
   { code: 'ru', name: 'Russian', flag: '🇷🇺' },
-  { code: 'uz', name: 'Uzbek', flag: '🇿🇿' }
+  { code: 'uz', name: 'Uzbek', flag: '🇺🇿' }
 ];
 
 interface RoutePoint {
   type: 'location' | 'destination' | 'transport';
-  name: string;
+  title: string;
   transport_type: string;
   duration: string;
   activities: string;
@@ -55,8 +56,8 @@ interface TourForm {
   location: number;
   duration: string;
   seats: number;
-  price: number;
-  sale_price: number;
+  price: number | string;
+  sale_price: number | string;
   start_date: string;
   end_date: string;
   status: number;
@@ -68,6 +69,9 @@ interface TourForm {
 
 export default function CreateTourPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const copyFromId = searchParams.get('copyFrom');
+
   const [formData, setFormData] = useState<TourForm>({
     title: {
       en: '',
@@ -90,7 +94,7 @@ export default function CreateTourPage() {
     images: [],
     route_json: [{
       type: 'location',
-      name: '',
+      title: '',
       transport_type: '',
       duration: '',
       activities: ''
@@ -110,6 +114,40 @@ export default function CreateTourPage() {
     {name: 'Draft', value: 3},
     {name: 'Deleted', value: 4},
   ];
+
+  useEffect(() => {
+    const copyTourData = async () => {
+      if (copyFromId) {
+        try {
+          const response = await api.post<Tour>('/tour/get-by-id', { id: copyFromId });
+          
+          if (response.success && response.data) {
+            const tourData = response.data;
+            setFormData({
+              title: tourData.title,
+              description: tourData.description,
+              location: Number(tourData.location),
+              duration: tourData.duration,
+              seats: Number(tourData.seats),
+              price: tourData.price,
+              sale_price: tourData.sale_price,
+              start_date: tourData.start_date,
+              end_date: tourData.end_date,
+              status: tourData.status,
+              images: tourData.files?.map(file => file.url) || [],
+              route_json: tourData.route_json || [],
+              included: tourData.included_json || [],
+              excluded: tourData.excluded_json || [],
+            });
+          }
+        } catch (error) {
+          console.error('Failed to copy tour data:', error);
+        }
+      }
+    };
+
+    copyTourData();
+  }, [copyFromId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -192,7 +230,7 @@ export default function CreateTourPage() {
         ...prev.route_json,
         {
           type: 'location',
-          name: '',
+          title: '',
           transport_type: '',
           duration: '',
           activities: ''
@@ -407,7 +445,7 @@ export default function CreateTourPage() {
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   required
                   min="0"
-                  step="0.01"
+                  step="1000"
                 />
               </div>
             </div>
@@ -420,13 +458,13 @@ export default function CreateTourPage() {
                 <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="number"
-                  name="price"
+                  name="sale_price"
                   value={formData.sale_price}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   required
                   min="0"
-                  step="0.01"
+                  step="1000"
                 />
               </div>
             </div>
@@ -439,7 +477,7 @@ export default function CreateTourPage() {
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="date"
-                  name="startDate"
+                  name="start_date"
                   value={formData.start_date}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
@@ -456,7 +494,7 @@ export default function CreateTourPage() {
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="date"
-                  name="endDate"
+                  name="end_date"
                   value={formData.end_date}
                   onChange={handleChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"

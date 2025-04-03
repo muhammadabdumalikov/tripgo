@@ -1,18 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/utils/api';
 import { TourListFilters, TourListResponse, Tour } from '@/types/tour';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Loader2, MapPin, Clock, Users, Star, Plus, Pencil } from 'lucide-react';
+import { Loader2, MapPin, Clock, Users, Star, Plus, Pencil, Copy, Trash2 } from 'lucide-react';
 import { TourFilters } from './components/TourFilters';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getProxiedImageUrl } from '@/utils/image';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function ToursPage() {
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState<TourListFilters>({
     limit: 10,
     offset: 0,
@@ -24,6 +34,7 @@ export default function ToursPage() {
     from_price: 0,
     to_price: 0,
   });
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['tours', filters],
@@ -69,6 +80,21 @@ export default function ToursPage() {
       style: 'currency',
       currency: 'USD'
     }).format(Number(price));
+  };
+
+  const handleDeleteTour = async (tourId: string) => {
+    try {
+      const response = await api.post('/admin/tour/delete', { id: tourId });
+      if (response.success) {
+        setOpenDeleteDialog(null); // Close dialog on success
+        await queryClient.invalidateQueries({ queryKey: ['tours'] });
+      } else {
+        throw new Error(response.error || 'Failed to delete tour');
+      }
+    } catch (error) {
+      console.error('Failed to delete tour:', error);
+      // You might want to show an error toast here
+    }
   };
 
   if (error) {
@@ -166,7 +192,7 @@ export default function ToursPage() {
                   <p>{new Date(tour.start_date).toLocaleDateString()} - {new Date(tour.end_date).toLocaleDateString()}</p>
                 </div>
 
-                <div className="mt-auto pt-4">
+                <div className="mt-auto pt-4 flex gap-2">
                   <Link 
                     href={`/dashboard/tours/edit/${tour.id}`}
                     className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
@@ -174,6 +200,42 @@ export default function ToursPage() {
                     <Pencil className="w-4 h-4" />
                     <span>Edit Tour</span>
                   </Link>
+                  <Link 
+                    href={`/dashboard/tours/create?copyFrom=${tour.id}`}
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                  >
+                    <Copy className="w-4 h-4" />
+                    <span>Copy Tour</span>
+                  </Link>
+                  <Dialog open={openDeleteDialog === tour.id} onOpenChange={(open) => setOpenDeleteDialog(open ? tour.id : null)}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="px-4"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you sure?</DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. This will permanently delete the tour
+                          &ldquo;{tour.title.uz}&rdquo; and remove all associated data.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setOpenDeleteDialog(null)}>Cancel</Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDeleteTour(tour.id)}
+                        >
+                          Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </Card>
             ))}

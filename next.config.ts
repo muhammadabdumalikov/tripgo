@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: 'http',
+        hostname: '116.202.26.85',
+        port: '9000',
+        pathname: '/travelapp/**',
+      },
     ],
   },
   async rewrites() {

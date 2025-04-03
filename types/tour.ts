@@ -43,6 +43,10 @@ export interface Tour {
     day?: string;
     title: string;
     description: string;
+    type: "location" | "destination" | "transport";
+    transport_type: string;
+    duration: string;
+    activities: string;
   }[];
   included_json?: string[];
   excluded_json?: string[];

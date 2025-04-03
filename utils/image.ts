@@ -1,15 +1,11 @@
-export function getProxiedImageUrl(url: string): string {
-  // If it's already using our proxy, return as is
-  if (url.startsWith('/img/')) {
+export const getProxiedImageUrl = (url: string) => {
+  if (!url) return '';
+
+  // If the URL is already a full URL, return it as is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
 
-  // Extract the file path from the original URL
-  const match = url.match(/travelapp\/(.+)$/);
-  if (match) {
-    return `/img/${match[1]}`;
-  }
-
-  // If no match, return the original URL
-  return url;
-} 
+  // If it's a relative URL from the API server, construct the full URL
+  return `http://116.202.26.85:9000/travelapp${url}`;
+}; 
