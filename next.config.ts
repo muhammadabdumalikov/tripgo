@@ -21,11 +21,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://37.60.231.13:3001/api/:path*",
+        destination: "http://116.202.26.85:3001/api/:path*",
       },
       {
         source: "/img/:path*",
-        destination: "http://37.60.231.13:9000/travelapp/:path*",
+        destination: "http://116.202.26.85:9000/travelapp/:path*",
       },
     ];
   },

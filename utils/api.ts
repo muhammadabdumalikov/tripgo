@@ -1,6 +1,6 @@
 import { getAccessToken, setAccessToken, clearTokens } from '@/utils/token';
 
-export const API_BASE_URL = 'http://37.60.231.13:3001/api';
+export const API_BASE_URL = 'http://116.202.26.85:3001/api';
 // For local development use: export const API_BASE_URL = 'http://localhost:3001/api';
 
 export interface ApiResponse<T = unknown> {

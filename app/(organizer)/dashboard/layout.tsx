@@ -37,7 +37,7 @@ export default function DashboardLayout({
   const handleLogout = async () => {
     try {
       // Call your logout API endpoint if needed
-      await fetch('http://37.60.231.13:3001/api/auth/admin/logout', {
+      await fetch('http://116.202.26.85:3001/api/auth/admin/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
