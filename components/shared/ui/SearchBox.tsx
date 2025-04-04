@@ -1,26 +1,34 @@
 'use client';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import LocationSearch from '@/components/features/home/Hero/LocationSearch';
+import DatePicker, { DateObject } from "react-multi-date-picker";
+import { Calendar } from "lucide-react";
+import "react-multi-date-picker/styles/layouts/mobile.css";
+import "react-multi-date-picker/styles/backgrounds/bg-dark.css";
 
 interface SearchBoxProps {
   variant?: 'search' | 'default' | 'compact';
+  onSearch?: (params: { location: string; dates: string[]; guests: string }) => void;
 }
 
-const SearchBox = ({ }: SearchBoxProps) => {
+const SearchBox = ({ onSearch }: SearchBoxProps) => {
   const router = useRouter();
   const [location, setLocation] = useState('');
-  const [startDate, setStartDate] = useState('');
+  const [startDate, setStartDate] = useState<DateObject[]>([]);
   const [guests] = useState('Guest 1 Room 1');
 
   const handleSearch = () => {
-    const searchParams = new URLSearchParams({
-      location: location || '',
-      startDate: startDate || '',
-      guests: guests || '',
-    });
-    router.push(`/search?${searchParams.toString()}`);
+    if (onSearch) {
+      onSearch({
+        location,
+        dates: startDate.map(date => date.format("YYYY-MM-DD")),
+        guests
+      });
+    } else {
+      router.push(`/search?location=${location}&dates=${startDate.map(date => date.format("YYYY-MM-DD")).join(',')}&guests=${guests}`);
+    }
   };
 
   return (
@@ -34,13 +42,114 @@ const SearchBox = ({ }: SearchBoxProps) => {
         {/* Start Date */}
         <div className="flex-1 px-6 py-4 md:py-1 border-b md:border-b-0 md:border-r border-gray-200">
           <p className="text-sm font-medium text-gray-800">Start Date</p>
-          <input 
-            type="date" 
-            placeholder="dd/mm/yyyy"
-            className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
+          <div className="relative">
+            <style jsx global>{`
+              .rmdp-wrapper {
+                background: white !important;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+                border: none !important;
+                border-radius: 0.75rem !important;
+                padding: 1rem !important;
+              }
+              .rmdp-calendar {
+                padding: 0.5rem !important;
+              }
+              .rmdp-day, .rmdp-week-day {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 0.875rem !important;
+              }
+              .rmdp-week-day {
+                color: #6B7280 !important;
+                font-weight: 500 !important;
+              }
+              .rmdp-day.rmdp-today span {
+                background-color: transparent !important;
+                color: #febd2d !important;
+                font-weight: 600 !important;
+              }
+              .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
+                background-color: #fff8e6 !important;
+                color: #febd2d !important;
+              }
+              .rmdp-day.rmdp-selected span:not(.highlight) {
+                background-color: #febd2d !important;
+                color: white !important;
+                box-shadow: none !important;
+              }
+              .rmdp-day.rmdp-range.start span:not(.highlight) {
+                background-color: #febd2d !important;
+                color: white !important;
+                border-top-left-radius: 100% !important;
+                border-bottom-left-radius: 100% !important;
+              }
+              .rmdp-day.rmdp-range.end span:not(.highlight) {
+                background-color: #febd2d !important;
+                color: white !important;
+                border-top-right-radius: 100% !important;
+                border-bottom-right-radius: 100% !important;
+              }
+              .rmdp-day.rmdp-range {
+                background-color: #febd2d !important;
+              }
+              .rmdp-day.rmdp-range span:not(.highlight) {
+                color: #fff8e6 !important;
+              }
+              .rmdp-day.rmdp-range.start, .rmdp-day.rmdp-range.end {
+                background-color: #febd2d !important;
+              }
+              .rmdp-day.rmdp-range.start span, .rmdp-day.rmdp-range.end span {
+                color: white !important;
+              }
+              .rmdp-day.rmdp-range-hover {
+                background-color: #fff8e6 !important;
+              }
+              .rmdp-day.rmdp-range-hover span {
+                color: #d4a012 !important;
+              }
+              .rmdp-arrow {
+                border: solid #4B5563 !important;
+                border-width: 0 2px 2px 0 !important;
+              }
+              .rmdp-arrow-container:hover {
+                background-color: #F3F4F6 !important;
+                box-shadow: none !important;
+              }
+              .rmdp-header-values {
+                font-size: 1rem !important;
+                font-weight: 600 !important;
+                color: #111827 !important;
+                margin-bottom: 0.5rem !important;
+              }
+              .rmdp-month-picker, .rmdp-year-picker {
+                background-color: white !important;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+                border-radius: 0.5rem !important;
+              }
+            `}</style>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-gray-400" />
+              <DatePicker
+                range
+                value={startDate}
+                onChange={(dates) => {
+                  if (Array.isArray(dates)) {
+                    setStartDate(dates);
+                  }
+                }}
+                format="YYYY-MM-DD"
+                placeholder="Select date"
+                minDate={new Date()}
+                rangeHover
+                monthYearSeparator=" "
+                dateSeparator=" - "
+                render={(value, openCalendar) => (
+                  <CustomDateInput value={value} openCalendar={openCalendar} />
+                )}
+                className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Guest */}
@@ -62,6 +171,22 @@ const SearchBox = ({ }: SearchBoxProps) => {
           <span>Search</span>
         </button>
       </div>
+    </div>
+  );
+};
+
+const CustomDateInput = ({ openCalendar, value }: { openCalendar: () => void, value: string }) => {
+  return (
+    <div
+      onClick={openCalendar}
+      className="flex items-center cursor-pointer w-full text-sm outline-none text-gray-600 hover:text-gray-800"
+    >
+      <input
+        value={value}
+        placeholder="Select date"
+        className="w-full cursor-pointer outline-none placeholder:text-gray-400"
+        readOnly
+      />
     </div>
   );
 };

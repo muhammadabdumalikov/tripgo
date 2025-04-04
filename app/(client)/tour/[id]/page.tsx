@@ -1,7 +1,6 @@
-'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
-import { Calendar, Clock, MapPin, Star, Users, Shield, Globe, ThumbsUp, Play, Grid3X3 } from 'lucide-react';
+import { Calendar, Clock, MapPin, Star, Users, Shield, Globe, ThumbsUp, Play } from 'lucide-react';
 import BookButton from '@/components/(client)/features/tour/BookButton';
 import FavoriteButton from '@/components/(client)/features/tour/FavoriteButton';
 import { api } from '@/utils/api';
@@ -108,7 +107,7 @@ function MediaGallery({
         {/* Side Grid for Additional Images */}
         <div className="hidden lg:grid h-full w-[25%] float-right grid-rows-3 gap-1 pl-1">
           {mediaFiles.slice(1, 5).map((file, index) => (
-            <div key={index} className="relative cursor-pointer group" onClick={() => {}}>
+            <div key={index} className="relative cursor-pointer group">
               {file.type === 'video' ? (
                 <div className="relative h-full bg-gray-900">
                   <Image
