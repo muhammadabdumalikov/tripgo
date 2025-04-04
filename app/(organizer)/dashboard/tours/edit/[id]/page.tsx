@@ -46,7 +46,7 @@ const languages: LanguageOption[] = [
 
 interface RoutePoint {
   type: string;
-  name: string;
+  title: string;
   transport_type: string;
   duration: string;
   activities: string;
@@ -148,7 +148,7 @@ export default function EditTourPage() {
     images: [],
     route_json: [{
       type: 'location',
-      name: '',
+      title: '',
       transport_type: '',
       duration: '',
       activities: ''
@@ -364,7 +364,7 @@ export default function EditTourPage() {
         ...prev.route_json,
         {
           type: 'location',
-          name: '',
+          title: '',
           transport_type: '',
           duration: '',
           activities: ''
@@ -846,8 +846,8 @@ export default function EditTourPage() {
                       </label>
                       <input
                         type="text"
-                        value={point.name}
-                        onChange={(e) => updateRoutePoint(index, 'name', e.target.value)}
+                        value={point.title}
+                        onChange={(e) => updateRoutePoint(index, 'title', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                         placeholder={point.type === 'transport' ? 'Transport name' : 'Location name'}
                       />
@@ -929,12 +929,12 @@ export default function EditTourPage() {
                         {point.type === 'location' 
                           ? (index === 0 ? 'Pickup location:' : 'Arrive back at:')
                           : point.type === 'destination'
-                          ? point.name
+                          ? point.title
                           : point.transport_type}
                       </h4>
                       <p className="text-gray-600">
                         {point.type === 'location' || point.type === 'destination' 
-                          ? point.name
+                          ? point.title
                           : `(${point.duration})`}
                         {point.type === 'destination' && point.activities && (
                           <span className="block text-sm text-gray-500 mt-1">

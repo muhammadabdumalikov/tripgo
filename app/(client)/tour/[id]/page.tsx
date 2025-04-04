@@ -11,7 +11,7 @@ export interface RoutePoint {
   /** Type of the point in the route */
   type: 'location' | 'destination' | 'transport';
   /** Name of the location or destination */
-  name: string;
+  title: string;
   /** Type of transport (only for transport type points) */
   transport_type?: string;
   /** Duration of transport or activity */
@@ -186,12 +186,12 @@ export default async function TourDetails({ params }: PageProps) {
                           {point.type === 'location' 
                             ? (index === 0 ? 'Pickup location:' : 'Arrive back at:')
                             : point.type === 'destination'
-                            ? point.name
+                            ? point.title
                             : point.transport_type}
                         </h4>
                         <p className="text-gray-600">
                           {point.type === 'location' || point.type === 'destination' 
-                            ? point.name
+                            ? point.title
                             : `(${point.duration})`}
                           {point.type === 'destination' && point.activities && (
                             <span className="block text-sm text-gray-500 mt-1">
