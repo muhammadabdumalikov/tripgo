@@ -57,9 +57,8 @@ export const TourCard = ({
             <Image
               src={getProxiedImageUrl(tour.organizer_logo || "/logo-placeholder.png")}
               alt="Organizer"
-              width={32}
-              height={32}
-              className="rounded-full"
+              fill
+              className="rounded-full p-px"
             />
           </div>
 
