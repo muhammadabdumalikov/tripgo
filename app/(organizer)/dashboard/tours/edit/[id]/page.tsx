@@ -1065,7 +1065,7 @@ export default function EditTourPage() {
                 <div>
                   <h4 className="text-lg font-medium mb-4 flex items-center gap-2 text-green-600">
                     <Check className="w-5 h-5" />
-                    What's Included
+                    What&apos;s Included
                   </h4>
                   <ul className="space-y-3">
                     {formData.includes
