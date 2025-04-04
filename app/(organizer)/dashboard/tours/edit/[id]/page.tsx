@@ -16,12 +16,17 @@ import {
   Globe,
   Loader2,
   ArrowLeft,
-  Plus
+  Plus,
+  Check,
+  Info
 } from 'lucide-react';
 import { api, API_BASE_URL } from '@/utils/api';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getProxiedImageUrl } from '@/utils/image';
+import { Tour } from '@/types/tour';
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface FileInfo {
   url: string;
@@ -45,11 +50,16 @@ const languages: LanguageOption[] = [
 ];
 
 interface RoutePoint {
-  type: string;
+  type: 'location' | 'destination' | 'transport';
   title: string;
   transport_type: string;
   duration: string;
   activities: string;
+}
+
+interface Includes {
+  title: string;
+  included: boolean;
 }
 
 interface TourForm {
@@ -73,41 +83,11 @@ interface TourForm {
   status: number;
   images: string[];
   route_json: RoutePoint[];
-  included: string[];
-  excluded: string[];
-}
-
-interface Tour {
-  id: string;
-  title: {
-    en: string;
-    ru: string;
-    uz: string;
-  };
-  description: {
-    en: string;
-    ru: string;
-    uz: string;
-  };
-  price: number;
-  sale_price: number;
-  rating: number;
-  reviews_count: number;
-  duration: string;
-  seats: number;
-  location: number;
-  start_location: string;
-  end_location: string;
-  files: Array<{
-    url: string;
-    type: string;
+  includes: Array<{
+    title: string;
+    included: boolean;
   }>;
-  included_json: string[];
-  excluded_json: string[];
-  route_json: RoutePoint[];
-  start_date: string;
-  end_date: string;
-  status: number;
+  excluded: string[];
 }
 
 export default function EditTourPage() {
@@ -153,54 +133,91 @@ export default function EditTourPage() {
       duration: '',
       activities: ''
     }],
-    included: ['Professional guide', 'Transportation'],
+    includes: [
+      { title: 'Professional guide', included: true },
+      { title: 'Transportation', included: true },
+    ],
     excluded: ['Personal expenses', 'Travel insurance']
   });
 
   const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);
 
   useEffect(() => {
-    if (tourData) {
-      // Ensure files is an array and map them correctly
-      const files = Array.isArray(tourData.files) ? tourData.files.map(file => ({
-        url: file.url,
-        name: file.url.split('/').pop() || '',
-        type: file.type || 'extra'
-      })) : [];
+    const fetchTourData = async () => {
+      try {
+        const response = await api.post<Tour>('/tour/get-by-id', { id: params.id });
+        if (response.success && response.data) {
+          const tourData = response.data;
+          if (tourData) {
+            // Ensure files is an array and map them correctly
+            const files = Array.isArray(tourData.files) ? tourData.files.map(file => ({
+              url: file.url,
+              name: file.url.split('/').pop() || '',
+              type: file.type || 'extra'
+            })) : [];
       
-      // Format dates to YYYY-MM-DD
-      const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-      };
+            // Format dates to YYYY-MM-DD
+            const formatDate = (dateString: string) => {
+              const date = new Date(dateString);
+              return date.toISOString().split('T')[0];
+            };
 
-      // Set uploaded files
-      setUploadedFiles(files);
-      
-      setFormData({
-        title: tourData.title,
-        description: tourData.description,
-        location: tourData.location,
-        duration: tourData.duration,
-        seats: tourData.seats,
-        price: Number(tourData.price),
-        sale_price: Number(tourData.sale_price),
-        start_date: formatDate(tourData.start_date),
-        end_date: formatDate(tourData.end_date),
-        status: tourData.status,
-        images: files.map(file => file.url),
-        route_json: tourData.route_json || [{
-          type: 'location',
-          name: '',
-          transport_type: '',
-          duration: '',
-          activities: ''
-        }],
-        included: tourData.included_json || ['Professional guide', 'Transportation'],
-        excluded: tourData.excluded_json || ['Personal expenses', 'Travel insurance']
-      });
-    }
-  }, [tourData]);
+            const defaultIncludes = [
+              { title: 'Professional guide', included: true },
+              { title: 'Transportation', included: true },
+            ];
+
+            const included = tourData.included_json || [];
+            const includes = included.map(item => ({
+              title: typeof item === 'string' ? item : item.title || '',
+              included: typeof item === 'string' ? true : Boolean(item.included),
+            }));
+
+            // Transform route_json to match RoutePoint interface
+            const routePoints = tourData.route_json?.map(point => ({
+              type: point.type,
+              title: point.title,
+              transport_type: point.transport_type || '',
+              duration: point.duration || '',
+              activities: point.activities || ''
+            })) || [{
+              type: 'location',
+              title: '',
+              transport_type: '',
+              duration: '',
+              activities: ''
+            }];
+            
+            setUploadedFiles(files);
+
+            setFormData({
+              title: tourData.title,
+              description: tourData.description,
+              location: Number(tourData.location),
+              duration: tourData.duration,
+              seats: Number(tourData.seats),
+              price: tourData.price,
+              sale_price: tourData.sale_price,
+              start_date: formatDate(tourData.start_date),
+              end_date: formatDate(tourData.end_date),
+              status: tourData.status,
+              images: files.map(file => file.url),
+              route_json: routePoints,
+              includes: includes.length > 0 ? includes : defaultIncludes,
+              excluded: tourData.excluded_json || [],
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch tour data:', error);
+        setError('Failed to load tour data');
+      } finally {
+        // setIsLoading(false);
+      }
+    };
+
+    fetchTourData();
+  }, [params.id]);
 
   const [dragActive, setDragActive] = useState(false);
   const [activeLanguage, setActiveLanguage] = useState<Language>('en');
@@ -357,6 +374,29 @@ export default function EditTourPage() {
     }
   };
 
+  const handleAddInclude = () => {
+    setFormData(prev => ({
+      ...prev,
+      includes: [...prev.includes, { title: '', included: true }]
+    }));
+  };
+
+  const handleRemoveInclude = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      includes: prev.includes.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleIncludeChange = (index: number, field: keyof Includes, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      includes: prev.includes.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
   const addRoutePoint = () => {
     setFormData(prev => ({
       ...prev,
@@ -403,10 +443,21 @@ export default function EditTourPage() {
         name: file.name,
       }));
 
+      // Transform includes data for API
+      const included = formData.includes
+        .filter(item => item.included)
+        .map(item => item.title);
+      
+      const excluded = formData.includes
+        .filter(item => !item.included)
+        .map(item => item.title);
+
       const response = await api.post('/admin/tour/update', {
         id: tourId,
         ...formData,
-        files // Include files array in the request
+        files,
+        included_json: included,
+        excluded_json: excluded,
       });
       
       if (!response.success) {
@@ -498,7 +549,7 @@ export default function EditTourPage() {
           <h1 className="text-2xl font-bold">Edit Tour</h1>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8 p-4">
           {/* Basic Information */}
           <div className="space-y-4">
             {/* Title in multiple languages */}
@@ -953,6 +1004,106 @@ export default function EditTourPage() {
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Includes & Excludes Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">Includes & Excludes</h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddInclude}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Item
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              {formData.includes.map((item, index) => (
+                <div key={index} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={item.title}
+                      onChange={(e) => handleIncludeChange(index, 'title', e.target.value)}
+                      placeholder="Enter item title"
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={`include-${index}`}>
+                      {item.included ? 'Included' : 'Excluded'}
+                    </Label>
+                    <Switch
+                      id={`include-${index}`}
+                      checked={item.included}
+                      onCheckedChange={(checked: boolean) => handleIncludeChange(index, 'included', checked)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveInclude(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Preview Section */}
+            <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border">
+              <h3 className="text-xl font-semibold mb-4">Includes & Excludes Preview</h3>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Included Items */}
+                <div>
+                  <h4 className="text-lg font-medium mb-4 flex items-center gap-2 text-green-600">
+                    <Check className="w-5 h-5" />
+                    What's Included
+                  </h4>
+                  <ul className="space-y-3">
+                    {formData.includes
+                      .filter(item => item.included)
+                      .map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <Check className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                          <span className="text-gray-700">{item.title}</span>
+                        </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Excluded Items */}
+                <div>
+                  <h4 className="text-lg font-medium mb-4 flex items-center gap-2 text-red-600">
+                    <X className="w-5 h-5" />
+                    Not Included
+                  </h4>
+                  <ul className="space-y-3">
+                    {formData.includes
+                      .filter(item => !item.included)
+                      .map((item, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <X className="w-4 h-4 text-red-500 mt-1 flex-shrink-0" />
+                          <span className="text-gray-700">{item.title}</span>
+                        </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Reference Note */}
+              <p className="text-sm text-gray-500 mt-6 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                For reference only. This is how the includes and excludes will appear to clients.
+              </p>
+            </div>
           </div>
 
           {/* Error Message */}

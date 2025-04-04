@@ -162,14 +162,18 @@ const ProfilePage = () => {
       const { url, name, size } = data;
 
       // Update profile with new logo
-      const newFiles = profile.files.filter(f => f.type !== 'logo').concat({
-        url,
-        name,
-        type: 'logo',
-        size,
-      });
+      const newFiles = (profile.files || [])
+        .filter(f => f.type !== 'logo')
+        .concat({
+          url,
+          name,
+          type: 'logo',
+          size,
+        });
 
       setProfile(prev => {
+        console.log(22222, prev);
+        
         if (!prev) return prev;
         return {
           ...prev,
@@ -183,6 +187,7 @@ const ProfilePage = () => {
       // TODO: Show error message to user
     }
   };
+      console.log(111111, profile);
 
   const LanguageTabs = () => (
     <div className="flex space-x-1 mb-4 border-b">

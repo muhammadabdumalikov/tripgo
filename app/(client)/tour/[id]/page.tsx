@@ -6,6 +6,7 @@ import BookButton from '@/components/(client)/features/tour/BookButton';
 import FavoriteButton from '@/components/(client)/features/tour/FavoriteButton';
 import { api } from '@/utils/api';
 import { getProxiedImageUrl } from '@/utils/image';
+import { Includes } from '@/app/(organizer)/dashboard/tours/create/page';
 
 export interface RoutePoint {
   /** Type of the point in the route */
@@ -49,7 +50,7 @@ interface Tour {
     url: string;
     type: string;
   }>;
-  included: string[];
+  includes: Includes[];
   route_json?: Array<RoutePoint>;
   reviews: Array<{
     id: number;
@@ -65,9 +66,168 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+function TourDetailsSkeleton() {
+  return (
+    <main className="min-h-screen bg-gray-50">
+      {/* Hero Image Section Skeleton */}
+      <div className="relative h-[75vh] bg-gray-300 animate-pulse">
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-24 h-6 bg-gray-400 rounded-full"></div>
+              <div className="w-20 h-6 bg-gray-400 rounded-full"></div>
+            </div>
+            <div className="h-10 w-2/3 bg-gray-400 rounded-lg mb-4"></div>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="w-32 h-6 bg-gray-400 rounded-lg"></div>
+              <div className="w-24 h-6 bg-gray-400 rounded-lg"></div>
+              <div className="w-28 h-6 bg-gray-400 rounded-lg"></div>
+              <div className="w-36 h-6 bg-gray-400 rounded-lg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Section Skeleton */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content Skeleton */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Description Skeleton */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="h-7 w-48 bg-gray-200 rounded-lg mb-4"></div>
+              <div className="space-y-3">
+                <div className="h-4 w-full bg-gray-200 rounded-lg"></div>
+                <div className="h-4 w-5/6 bg-gray-200 rounded-lg"></div>
+                <div className="h-4 w-4/6 bg-gray-200 rounded-lg"></div>
+              </div>
+            </div>
+
+            {/* Route Skeleton */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="h-7 w-48 bg-gray-200 rounded-lg mb-4"></div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-32 h-6 bg-gray-200 rounded-lg"></div>
+                <div className="w-4 h-4 bg-gray-200"></div>
+                <div className="w-32 h-6 bg-gray-200 rounded-lg"></div>
+              </div>
+              
+              {/* Route Points */}
+              <div className="relative pl-8 space-y-6">
+                <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200"></div>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="relative">
+                    <div className="absolute left-[-33px] w-6 h-6 bg-gray-200 rounded-full"></div>
+                    <div className="h-6 w-48 bg-gray-200 rounded-lg mb-2"></div>
+                    <div className="h-4 w-64 bg-gray-200 rounded-lg"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Includes Skeleton */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="h-7 w-48 bg-gray-200 rounded-lg mb-4"></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
+                    <div className="h-4 w-40 bg-gray-200 rounded-lg"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Reviews Skeleton */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="h-7 w-48 bg-gray-200 rounded-lg"></div>
+                <div className="flex items-center gap-2">
+                  <div className="h-6 w-24 bg-gray-200 rounded-lg"></div>
+                </div>
+              </div>
+
+              {/* Review Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="w-24 h-4 bg-gray-200 rounded-lg"></div>
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full"></div>
+                      <div className="w-12 h-4 bg-gray-200 rounded-lg"></div>
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-4">
+                  <div className="h-6 w-full bg-gray-200 rounded-lg"></div>
+                  <div className="h-6 w-3/4 bg-gray-200 rounded-lg"></div>
+                </div>
+              </div>
+
+              {/* Individual Reviews */}
+              <div className="space-y-6">
+                {[1, 2].map((i) => (
+                  <div key={i} className="border-t pt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="h-5 w-32 bg-gray-200 rounded-lg"></div>
+                          <div className="h-5 w-24 bg-gray-200 rounded-lg"></div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="h-4 w-full bg-gray-200 rounded-lg"></div>
+                          <div className="h-4 w-5/6 bg-gray-200 rounded-lg"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Booking Card Skeleton */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="h-8 w-32 bg-gray-200 rounded-lg"></div>
+                <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div className="h-12 w-full bg-gray-200 rounded-xl"></div>
+                <div className="h-12 w-full bg-gray-200 rounded-xl"></div>
+              </div>
+
+              <div className="h-12 w-full bg-gray-200 rounded-xl mb-6"></div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-gray-200 rounded-full"></div>
+                  <div className="h-4 w-full bg-gray-200 rounded-lg"></div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-gray-200 rounded-full"></div>
+                  <div className="h-4 w-5/6 bg-gray-200 rounded-lg"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
 export default async function TourDetails({ params }: PageProps) {
   // Await params before accessing id
   const { id } = await params;
+  
+  // Show skeleton while loading
+  if (!id) {
+    return <TourDetailsSkeleton />;
+  }
   
   // Fetch tour data
   const response = await api.post<Tour>('/tour/get-by-id', { id }, false);
@@ -236,14 +396,14 @@ export default async function TourDetails({ params }: PageProps) {
             </div>
 
             {/* What's Included */}
-            {tour.included && tour.included.length > 0 && (
+            {tour.includes && tour.includes.length > 0 && (
               <div className="bg-white rounded-2xl p-6 shadow-sm">
                 <h2 className="text-xl font-semibold mb-4">What&apos;s included</h2>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {tour.included.map((item, index) => (
+                  {tour.includes.map((item, index) => (
                     <li key={index} className="flex items-center gap-2 text-gray-600">
                       <div className="w-2 h-2 bg-green-500 rounded-full" />
-                      {item}
+                      {item.title}
                     </li>
                   ))}
                 </ul>

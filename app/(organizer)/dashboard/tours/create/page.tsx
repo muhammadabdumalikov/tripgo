@@ -19,6 +19,8 @@ import {
 import { api } from '@/utils/api';
 import { Button } from '@/components/ui/button';
 import { Tour } from '@/types/tour';
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 type Language = 'en' | 'ru' | 'uz';
 
@@ -42,6 +44,11 @@ interface RoutePoint {
   activities: string;
 }
 
+export interface Includes {
+  title: string;
+  included: boolean;
+}
+
 interface TourForm {
   title: {
     en: string;
@@ -63,7 +70,10 @@ interface TourForm {
   status: number;
   images: string[];
   route_json: RoutePoint[];
-  included: string[];
+  includes: Array<{
+    title: string;
+    included: boolean;
+  }>;
   excluded: string[];
 }
 
@@ -99,7 +109,12 @@ export default function CreateTourPage() {
       duration: '',
       activities: ''
     }],
-    included: ['Professional guide', 'Transportation'],
+    includes: [
+      { title: 'Professional guide', included: true },
+      { title: 'Transportation', included: true },
+      { title: 'Lunch', included: false },
+      { title: 'Entrance fees', included: true },
+    ],
     excluded: ['Personal expenses', 'Travel insurance']
   });
 
@@ -120,10 +135,21 @@ export default function CreateTourPage() {
       if (copyFromId) {
         try {
           const response = await api.post<Tour>('/tour/get-by-id', { id: copyFromId });
-          
           if (response.success && response.data) {
             const tourData = response.data;
-            setFormData({
+            const defaultIncludes = [
+              { title: 'Professional guide', included: true },
+              { title: 'Transportation', included: true },
+            ];
+
+            const included = tourData.included_json || [];
+            const includes = included.map(item => ({
+              title: typeof item === 'string' ? item : item.title || '',
+              included: typeof item === 'string' ? true : Boolean(item.included),
+            }));
+
+            setFormData(prev => ({
+              ...prev,
               title: tourData.title,
               description: tourData.description,
               location: Number(tourData.location),
@@ -136,9 +162,9 @@ export default function CreateTourPage() {
               status: tourData.status,
               images: tourData.files?.map(file => file.url) || [],
               route_json: tourData.route_json || [],
-              included: tourData.included_json || [],
+              includes: includes.length > 0 ? includes : defaultIncludes,
               excluded: tourData.excluded_json || [],
-            });
+            }));
           }
         } catch (error) {
           console.error('Failed to copy tour data:', error);
@@ -255,23 +281,58 @@ export default function CreateTourPage() {
     }));
   };
 
+  const handleAddInclude = () => {
+    setFormData(prev => ({
+      ...prev,
+      includes: [...prev.includes, { title: '', included: true }]
+    }));
+  };
+
+  const handleRemoveInclude = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      includes: prev.includes.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleIncludeChange = (index: number, field: keyof Includes, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      includes: prev.includes.map((item, i) => 
+        i === index ? { ...item, [field]: value } : item
+      )
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const response = await api.post('/admin/tour/create', formData);
+      // Transform includes data for API
+      const included = formData.includes
+        .filter(item => item.included)
+        .map(item => item.title);
       
+      const excluded = formData.includes
+        .filter(item => !item.included)
+        .map(item => item.title);
+
+      const response = await api.post('/tour/create', {
+        ...formData,
+        included_json: included,
+        excluded_json: excluded,
+      });
+
       if (!response.success) {
         throw new Error(response.error || 'Failed to create tour');
       }
 
-      console.log('Tour created successfully:', response.data);
       router.push('/dashboard/tours');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while creating the tour');
-      console.error('Error creating tour:', err);
+    } catch (error) {
+      console.error('Failed to create tour:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create tour');
     } finally {
       setIsSubmitting(false);
     }
@@ -303,7 +364,7 @@ export default function CreateTourPage() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold mb-6">Create New Tour</h1>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8 p-4">
           {/* Basic Information */}
           <div className="space-y-4">
             {/* Title in multiple languages */}
@@ -741,6 +802,57 @@ export default function CreateTourPage() {
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Includes & Excludes Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">Includes & Excludes</h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddInclude}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Item
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              {formData.includes.map((item, index) => (
+                <div key={index} className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={item.title}
+                      onChange={(e) => handleIncludeChange(index, 'title', e.target.value)}
+                      placeholder="Enter item title"
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={`include-${index}`}>
+                      {item.included ? 'Included' : 'Excluded'}
+                    </Label>
+                    <Switch
+                      id={`include-${index}`}
+                      checked={item.included}
+                      onCheckedChange={(checked: boolean) => handleIncludeChange(index, 'included', checked)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveInclude(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Error Message */}

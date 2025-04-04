@@ -48,7 +48,7 @@ export interface Tour {
     duration: string;
     activities: string;
   }[];
-  included_json?: string[];
+  included_json?: Array<string | { title: string; included: boolean }>;
   excluded_json?: string[];
   total: string;
   organizer_title: string;
