@@ -10,24 +10,23 @@ import "react-multi-date-picker/styles/backgrounds/bg-dark.css";
 
 interface SearchBoxProps {
   variant?: 'search' | 'default' | 'compact';
-  onSearch?: (params: { location: string; dates: string[]; guests: string }) => void;
+  onSearch?: (params: { location: string; dates: string[]; }) => void;
 }
 
 const SearchBox = ({ onSearch }: SearchBoxProps) => {
   const router = useRouter();
   const [location, setLocation] = useState('');
   const [startDate, setStartDate] = useState<DateObject[]>([]);
-  const [guests] = useState('Guest 1 Room 1');
+  // const [guests] = useState('Guest 1 Room 1');
 
   const handleSearch = () => {
     if (onSearch) {
       onSearch({
         location,
-        dates: startDate.map(date => date.format("YYYY-MM-DD")),
-        guests
+        dates: startDate.map(date => date.format("DD.MM.YYYY")),
       });
     } else {
-      router.push(`/search?location=${location}&dates=${startDate.map(date => date.format("YYYY-MM-DD")).join(',')}&guests=${guests}`);
+      router.push(`/search?location=${location}&dates=${startDate.map(date => date.format("DD.MM.YYYY")).join(',')}`);
     }
   };
 
@@ -40,7 +39,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
         </div>
 
         {/* Start Date */}
-        <div className="flex-1 px-6 py-4 md:py-1 border-b md:border-b-0 md:border-r border-gray-200">
+        <div className="flex-1 px-6 py-4 md:py-1 border-b md:border-b-0 border-gray-200">
           <p className="text-sm font-medium text-gray-800">Start Date</p>
           <div className="relative">
             <style jsx global>{`
@@ -137,7 +136,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
                     setStartDate(dates);
                   }
                 }}
-                format="YYYY-MM-DD"
+                format="MMM D"
                 placeholder="Select date"
                 minDate={new Date()}
                 rangeHover
@@ -146,17 +145,17 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
                 render={(value, openCalendar) => (
                   <CustomDateInput value={value} openCalendar={openCalendar} />
                 )}
-            className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400"
-          />
+                className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400 mt-10"
+              />
             </div>
           </div>
         </div>
 
-        {/* Guest */}
+        {/* Guest
         <div className="flex-1 px-6 py-4 md:py-1">
           <p className="text-sm font-medium text-gray-800">Guest</p>
           <p className="text-sm text-gray-600">{guests}</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Search Button */}
@@ -184,7 +183,7 @@ const CustomDateInput = ({ openCalendar, value }: { openCalendar: () => void, va
       <input
         value={value}
         placeholder="Select date"
-        className="w-full cursor-pointer outline-none placeholder:text-gray-400"
+        className="w-44 cursor-pointer outline-none placeholder:text-gray-400"
         readOnly
       />
     </div>

@@ -587,7 +587,7 @@ export default async function TourDetails({ params }: PageProps) {
             <div className="bg-white rounded-2xl p-6 shadow-sm sticky top-32">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <span className="text-3xl font-bold">${tour.price}</span>
+                  <span className="text-3xl font-bold">{Intl.NumberFormat().format(+tour.price)}</span>
                   <span className="text-gray-500 ml-1">/ person</span>
                 </div>
                 <FavoriteButton />
