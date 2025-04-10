@@ -3,13 +3,15 @@ import React from 'react'
 import Hero from './Hero/Hero'
 // import Destination from '../destination/Destination/Destination'
 import Tour from '@/components/(client)/features/tour/Tour/Tour';
+import Blogs from './Blogs/Blogs';
 
 const Home = () => {
   return (
     <div className='overflow-hidden w-full'>
       <Hero />
       {/* <Destination /> */}
-      <Tour/>
+      <Tour />
+      <Blogs />
     </div>
   )
 }

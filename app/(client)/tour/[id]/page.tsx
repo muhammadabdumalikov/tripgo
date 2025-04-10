@@ -94,14 +94,14 @@ function MediaGallery({
       <div className="relative h-[75vh] mt-28">
         {/* Main Large Image */}
         <div className="relative h-full w-full lg:w-[75%] bg-gray-900 float-left">
-          <Image
+        <Image
             src={getProxiedImageUrl(mainImage)}
             alt="Main tour image"
-            fill
+          fill
             className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/20" />
+          priority
+        />
+        <div className="absolute inset-0 bg-black/20" />
         </div>
 
         {/* Side Grid for Additional Images */}
@@ -301,7 +301,7 @@ function TourDetailsSkeleton() {
               <div className="h-12 w-full bg-gray-200 rounded-xl mb-6"></div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-gray-200 rounded-full"></div>
                   <div className="h-4 w-full bg-gray-200 rounded-lg"></div>
               </div>
@@ -450,7 +450,7 @@ export default async function TourDetails({ params }: PageProps) {
                   <p className="text-lg font-medium mb-2">No Route Information</p>
                   <p className="text-sm text-center text-gray-400 max-w-sm">
                     The route details for this tour are not available at the moment. Please contact the organizer for more information about the tour itinerary.
-                  </p>
+                </p>
               </div>
               )}
             </div>

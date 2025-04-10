@@ -146,8 +146,8 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
                 render={(value, openCalendar) => (
                   <CustomDateInput value={value} openCalendar={openCalendar} />
                 )}
-                className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400"
-              />
+            className="w-full text-sm outline-none text-gray-600 focus:text-gray-800 placeholder:text-gray-400"
+          />
             </div>
           </div>
         </div>
