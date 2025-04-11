@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Blog {
   id: string;
@@ -18,10 +19,6 @@ const blogs: Blog[] = [
 const Blogs = () => {
   const router = useRouter();
 
-  const handleBlogClick = (id: string) => {
-    router.push(`/blog/${id}`);
-  };
-
   return (
     <div className="w-[90%] xl:w-[80%] py-16 px-12 mx-auto mb-8">
       <div className="w-full flex justify-between items-center mb-4">
@@ -35,11 +32,9 @@ const Blogs = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {blogs.map(blog => (
-          <div 
-            key={blog.id} 
-            className="rounded-2xl overflow-hidden border cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            onClick={() => handleBlogClick(blog.id)}
-          >
+          <Link href={`/blog/${blog.id}`}
+            key={blog.id}
+            className="rounded-2xl overflow-hidden border cursor-pointer hover:shadow-lg transition-shadow duration-300">
             <div className="relative w-full h-56">
               <Image
                 src={blog.image}
@@ -66,7 +61,7 @@ const Blogs = () => {
                 <span className="text-sm text-gray-700">Author Name</span>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

@@ -1,7 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
-
 interface Blog {
   id: string;
   title: string;
@@ -17,86 +15,40 @@ interface Blog {
   readTime: string;
 }
 
-// This would typically come from an API or database
-const getBlogBySlug = (slug: string): Blog | null => {
-  const blogs: Blog[] = [
-    {
-      id: '1',
-      title: 'Exploring Banff',
-      description: 'Discover the beauty of Banff National Park',
-      image: '/images/bg2.jpg',
-      content: `
-        <p>Banff National Park is a stunning destination that offers breathtaking landscapes and unforgettable experiences. From the turquoise waters of Lake Louise to the rugged peaks of the Canadian Rockies, Banff is a paradise for nature lovers and adventure seekers alike.</p>
-        
-        <h2>Must-See Attractions</h2>
-        <p>One of the most iconic spots in Banff is Lake Louise, known for its crystal-clear waters and surrounding mountain views. The Fairmont Chateau Lake Louise offers luxurious accommodations with stunning views of the lake.</p>
-        
-        <h2>Outdoor Activities</h2>
-        <p>Whether you're interested in hiking, skiing, or wildlife watching, Banff has something for everyone. The park's extensive trail system offers routes for all skill levels, from easy walks to challenging mountain climbs.</p>
-      `,
-      author: {
-        name: 'John Doe',
-        avatar: '/images/bg2.jpg'
-      },
-      date: 'March 19, 2025',
-      category: 'Travel',
-      readTime: '5 min read'
-    },
-    {
-      id: '2',
-      title: 'Exploring Banff',
-      description: 'Discover the beauty of Banff National Park',
-      image: '/images/bg2.jpg',
-      content: `
-        <p>Banff National Park is a stunning destination that offers breathtaking landscapes and unforgettable experiences. From the turquoise waters of Lake Louise to the rugged peaks of the Canadian Rockies, Banff is a paradise for nature lovers and adventure seekers alike.</p>
-        
-        <h2>Must-See Attractions</h2>
-        <p>One of the most iconic spots in Banff is Lake Louise, known for its crystal-clear waters and surrounding mountain views. The Fairmont Chateau Lake Louise offers luxurious accommodations with stunning views of the lake.</p>
-        
-        <h2>Outdoor Activities</h2>
-        <p>Whether you're interested in hiking, skiing, or wildlife watching, Banff has something for everyone. The park's extensive trail system offers routes for all skill levels, from easy walks to challenging mountain climbs.</p>
-      `,
-      author: {
-        name: 'John Doe',
-        avatar: '/images/bg2.jpg'
-      },
-      date: 'March 19, 2025',
-      category: 'Travel',
-      readTime: '5 min read'
-    },
-    {
-      id: '3',
-      title: 'Exploring Banff',
-      description: 'Discover the beauty of Banff National Park',
-      image: '/images/bg2.jpg',
-      content: `
-        <p>Banff National Park is a stunning destination that offers breathtaking landscapes and unforgettable experiences. From the turquoise waters of Lake Louise to the rugged peaks of the Canadian Rockies, Banff is a paradise for nature lovers and adventure seekers alike.</p>
-        
-        <h2>Must-See Attractions</h2>
-        <p>One of the most iconic spots in Banff is Lake Louise, known for its crystal-clear waters and surrounding mountain views. The Fairmont Chateau Lake Louise offers luxurious accommodations with stunning views of the lake.</p>
-        
-        <h2>Outdoor Activities</h2>
-        <p>Whether you're interested in hiking, skiing, or wildlife watching, Banff has something for everyone. The park's extensive trail system offers routes for all skill levels, from easy walks to challenging mountain climbs.</p>
-      `,
-      author: {
-        name: 'John Doe',
-        avatar: '/images/bg2.jpg'
-      },
-      date: 'March 19, 2025',
-      category: 'Travel',
-      readTime: '5 min read'
-    },
-  ];
-  
-  return blogs.find(blog => blog.id === slug) || null;
-};
+// interface PageProps {
+//   params: {
+//     slug: string;
+//   };
+//   searchParams?: { [key: string]: string | string[] | undefined };
+// }
 
-export default function BlogDetail({ params }: { params: { slug: string } }) {
-  const blog = getBlogBySlug(params?.slug);
+export default async function BlogDetail() {
+  // const { slug } = await params;
+  // slug;
+  const blog: Blog = {
+    id: '1',
+    title: 'Exploring Banff',
+    description: 'Discover the beauty of Banff National Park',
+    image: '/images/bg2.jpg',
+    content: `
+        <p>Banff National Park is a stunning destination that offers breathtaking landscapes and unforgettable experiences. From the turquoise waters of Lake Louise to the rugged peaks of the Canadian Rockies, Banff is a paradise for nature lovers and adventure seekers alike.</p>
+        
+        <h2>Must-See Attractions</h2>
+        <p>One of the most iconic spots in Banff is Lake Louise, known for its crystal-clear waters and surrounding mountain views. The Fairmont Chateau Lake Louise offers luxurious accommodations with stunning views of the lake.</p>
+        
+        <h2>Outdoor Activities</h2>
+        <p>Whether you're interested in hiking, skiing, or wildlife watching, Banff has something for everyone. The park's extensive trail system offers routes for all skill levels, from easy walks to challenging mountain climbs.</p>
+      `,
+    author: {
+      name: 'John Doe',
+      avatar: '/images/bg2.jpg'
+    },
+    date: 'March 19, 2025',
+    category: 'Travel',
+    readTime: '5 min read'
+  };
 
-  if (!blog) {
-    notFound();
-  }
+console.log(22222);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
