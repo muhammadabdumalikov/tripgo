@@ -76,10 +76,22 @@ const RecommendedTours = () => {
   };
 
   return (
-    <div className="w-[90%] xl:w-[80%] py-16 px-12 mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
-      {data?.data?.map((item, index) => (
-        <TourCard key={index} index={index} tour={item} onPressHandler={onPressHandler}/>
-      ))}
+    <div className="w-[90%] xl:w-[80%] py-16 mx-auto mb-8">
+      <div className="w-full flex justify-between items-center px-12 mb-4">
+        <h2 className="text-2xl font-bold">Hot Tours</h2>
+        <button
+          onClick={() => router.push('/blogs')}
+          className="text-blue-600 hover:text-blue-800 font-semibold"
+        >
+          See All
+        </button>
+      </div>
+
+      <div className="w-full pt-2 pb-8 px-12 grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
+        {data?.data?.map((item, index) => (
+          <TourCard key={index} index={index} tour={item} onPressHandler={onPressHandler} />
+        ))}
+      </div>
     </div>
   );
 };

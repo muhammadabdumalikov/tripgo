@@ -796,7 +796,7 @@ export default function CreateTourPage() {
                 </div>
 
                 {/* Reference Note */}
-                <p className="text-sm text-gray-500 mt-6 flex items-center gap-2">
+                <p className="text-xs text-gray-500 mt-6 flex items-center gap-2">
                   <Clock className="w-4 h-4" />
                   For reference only. This is how the route will appear to clients.
                 </p>

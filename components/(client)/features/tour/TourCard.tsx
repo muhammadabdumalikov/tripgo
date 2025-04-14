@@ -36,7 +36,7 @@ export const TourCard = ({
       <div
         key={index}
         onClick={() => onPressHandler(tour)}
-        className="w-full h-96 overflow-hidden rounded-sm cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
+        className="w-full h-96 overflow-hidden cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1 border rounded-2xl"
       >
         {/* Image Section */}
         <div className="relative w-full h-56 flex-shrink-0 rounded-t-sm overflow-hidden">
@@ -69,7 +69,7 @@ export const TourCard = ({
         </div>
 
         {/* Info Section */}
-        <div className="p-3 pb-6 flex flex-col flex-grow">
+        <div className="p-3 pb-4 flex flex-col flex-grow">
           <div className="items-center mt-1">
             <p className="text-sm text-gray-500">Cultural • Coffee</p>
 
@@ -79,7 +79,7 @@ export const TourCard = ({
           </div>
 
           {/* Price Section */}
-          <div className="flex justify-between items-end mt-auto">
+          <div className="flex justify-between items-end mt-auto border-t-[0.5px] pt-4">
             <span className="text-gray-500 text-xs">
               <span className="text-orange-400 text-base font-semibold">
                 {Intl.NumberFormat().format(+tour.price)}
