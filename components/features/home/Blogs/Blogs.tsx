@@ -34,7 +34,7 @@ const Blogs = () => {
         {blogs.map(blog => (
           <Link href={`/blog/${blog.id}`}
             key={blog.id}
-            className="rounded-2xl overflow-hidden border cursor-pointer hover:shadow-lg transition-shadow duration-300">
+            className="rounded-sm overflow-hidden border">
             <div className="relative w-full h-56">
               <Image
                 src={blog.image}

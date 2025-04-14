@@ -91,48 +91,57 @@ function MediaGallery({
   return (
     <>
       {/* Main Gallery Grid */}
-      <div className="relative h-[75vh] mt-28">
-        {/* Main Large Image */}
-        <div className="relative h-full w-full lg:w-[75%] bg-gray-900 float-left">
-        <Image
-            src={getProxiedImageUrl(mainImage)}
-            alt="Main tour image"
-          fill
-            className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/20" />
-        </div>
-
-        {/* Side Grid for Additional Images */}
-        <div className="hidden lg:grid h-full w-[25%] float-right grid-rows-3 gap-1 pl-1">
-          {mediaFiles.slice(1, 5).map((file, index) => (
-            <div key={index} className="relative cursor-pointer group">
-              {file.type === 'video' ? (
-                <div className="relative h-full bg-gray-900">
-                  <Image
-                    src={getProxiedImageUrl(file.url)}
-                    alt={`Tour preview ${index + 1}`}
-                    fill
-                    className="object-cover opacity-90 group-hover:opacity-95 transition-opacity"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Play className="w-10 h-10 text-white opacity-80 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                </div>
-              ) : (
-                <Image
-                  src={getProxiedImageUrl(file.url)}
-                  alt={`Tour preview ${index + 1}`}
-                  fill
-                  className="object-cover opacity-90 group-hover:opacity-95 transition-opacity"
-                />
-              )}
+      <div className="relative h-[75vh] max-w-7xl mx-auto mt-28">
+        <div className="mx-auto h-full w-full">
+          <div className="flex h-full gap-1">
+            {/* Main Large Image */}
+            <div className="relative h-full w-full lg:w-[75%] bg-gray-900 overflow-hidden">
+              <Image
+                src={getProxiedImageUrl(mainImage)}
+                alt="Main tour image"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/20" />
             </div>
-          ))}
+
+            {/* Side Grid for Additional Images */}
+            <div className="hidden lg:grid h-full w-[25%] grid-rows-3 gap-1">
+              {mediaFiles.slice(1, 4).map((file, index) => (
+                <div key={index} className="relative cursor-pointer group overflow-hidden">
+                  {file.type === 'video' ? (
+                    <div className="relative h-full bg-gray-900">
+                      <Image
+                        src={getProxiedImageUrl(file.url)}
+                        alt={`Tour preview ${index + 1}`}
+                        fill
+                        className="object-cover opacity-90 group-hover:opacity-95 transition-opacity"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Play className="w-10 h-10 text-white opacity-80 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </div>
+                  ) : (
+                    <Image
+                      src={getProxiedImageUrl(file.url)}
+                      alt={`Tour preview ${index + 1}`}
+                      fill
+                      className="object-cover opacity-90 group-hover:opacity-95 transition-opacity"
+                    />
+                  )}
+                  {index === mediaFiles.length - 2 && mediaFiles.length > 4 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white text-xl font-medium">+{mediaFiles.length - 4}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Gradient Overlay */}
+        {/* Title and Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
           <div className="max-w-7xl mx-auto flex justify-between items-end">
             <div>
@@ -359,30 +368,88 @@ export default async function TourDetails({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Description */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4">About this tour</h2>
-              <p className="text-gray-600 leading-relaxed mb-6">{tour.description.en}</p>
-            </div>
+            {/* About this activity */}
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">About this activity</h2>
+              
+              {/* Free cancellation */}
+              <div>
+                <div className="flex items-start gap-5 py-5 border-b border-gray-100 px-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-gray-900 mb-0.5">
+                      Free cancellation
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Cancel up to 24 hours in advance for a full refund
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            {/* Map Section */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-xl font-semibold mb-4">Tour Route</h2>
-              <div className="flex items-center gap-2 text-gray-600 mb-4">
-                <MapPin className="w-5 h-5 text-[#febd2d]" />
-                <span>From: {tour.start_location}</span>
-                <span className="mx-2">→</span>
-                <MapPin className="w-5 h-5 text-[#febd2d]" />
-                <span>To: {tour.end_location}</span>
+              {/* Duration */}
+              <div>
+                <div className="flex items-start gap-5 py-5 border-b border-gray-100 px-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-gray-900 mb-0.5">
+                      Duration {tour.duration}
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Check availability to see starting times
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Live tour guide */}
+              <div>
+                <div className="flex items-start gap-5 py-5 border-b border-gray-100 px-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center">
+                    <Globe className="w-4 h-4 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-gray-900 mb-0.5">
+                      Live tour guide
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      English
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Small group */}
+              <div>
+                <div className="flex items-start gap-5 py-5 px-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-gray-900 mb-0.5">
+                      Small group
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Limited to {tour.group_size} participants
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Experience Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-2xl font-bold mb-6">Experience</h2>
+              <h2 className="text-xl font-semibold mb-6">Experience</h2>
               {tour.route_json && tour.route_json.length > 0 ? (
                 <>
-                  <h3 className="text-xl font-semibold mb-4">Route</h3>
+                  <h3 className="text-lg font-semibold mb-4">Route</h3>
                 <div className="relative pl-8 space-y-6">
                   {/* Vertical Line */}
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
@@ -588,7 +655,7 @@ export default async function TourDetails({ params }: PageProps) {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <span className="text-3xl font-bold">{Intl.NumberFormat().format(+tour.price)}</span>
-                  <span className="text-gray-500 ml-1">/ person</span>
+                  <span className="text-gray-500 ml-1">/ per person</span>
                 </div>
                 <FavoriteButton />
               </div>

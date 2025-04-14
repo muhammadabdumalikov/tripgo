@@ -36,10 +36,10 @@ export const TourCard = ({
       <div
         key={index}
         onClick={() => onPressHandler(tour)}
-        className="w-full h-96 overflow-hidden rounded-3xl cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
+        className="w-full h-96 overflow-hidden rounded-sm cursor-pointer snap-center flex flex-col transition-all duration-500 group-hover:shadow-xl group-hover:-translate-y-1"
       >
         {/* Image Section */}
-        <div className="relative w-full h-56 flex-shrink-0 rounded-t-3xl overflow-hidden">
+        <div className="relative w-full h-56 flex-shrink-0 rounded-t-sm overflow-hidden">
           <Image
             src={getProxiedImageUrl(tour.files?.find((f) => f.type === "extra")?.url || "/placeholder.jpg")}
             alt={tour.title}
@@ -80,11 +80,11 @@ export const TourCard = ({
 
           {/* Price Section */}
           <div className="flex justify-between items-end mt-auto">
-            <span className="text-gray-500 text-sm">
-              <span className="text-orange-400 font-semibold">
+            <span className="text-gray-500 text-xs">
+              <span className="text-orange-400 text-base font-semibold">
                 {Intl.NumberFormat().format(+tour.price)}
               </span>
-              /person
+              /per person
             </span>
             
             {/* Rating */}

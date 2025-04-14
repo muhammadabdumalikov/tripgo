@@ -48,8 +48,6 @@ export default async function BlogDetail() {
     readTime: '5 min read'
   };
 
-console.log(22222);
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header Section */}
