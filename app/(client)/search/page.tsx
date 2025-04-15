@@ -1,112 +1,97 @@
 'use client';
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import TravelCalendar from '@/components/features/calendar/TravelCalendar';
 import { TourCard, Tour } from '@/components/(client)/features/tour/TourCard';
+import { api } from '@/utils/api';
 
-// This would typically come from an API based on search params
-const properties = [
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Shinano, Kamiminochi District, Japan',
-    rating: 4.94,
-    distance: '5,817 kilometers away',
-    dates: 'Mar 30 - Apr 4',
-    price: 458,
-    isGuestFavorite: false,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Jibhi, India',
-    rating: 4.89,
-    distance: '1,301 kilometers away',
-    dates: 'Jul 1 - 6',
-    price: 80,
-    isGuestFavorite: false,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Jibhi, India',
-    rating: 4.95,
-    distance: '1,302 kilometers away',
-    dates: 'Mar 11 - 16',
-    price: 140,
-    isGuestFavorite: true,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Saini, India',
-    rating: 4.93,
-    distance: '1,283 kilometers away',
-    dates: 'Mar 3 - 8',
-    price: 27,
-    isGuestFavorite: true,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Jibhi, India',
-    rating: 4.89,
-    distance: '1,301 kilometers away',
-    dates: 'Jul 1 - 6',
-    price: 80,
-    isGuestFavorite: false,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Jibhi, India',
-    rating: 4.95,
-    distance: '1,302 kilometers away',
-    dates: 'Mar 11 - 16',
-    price: 140,
-    isGuestFavorite: true,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Saini, India',
-    rating: 4.93,
-    distance: '1,283 kilometers away',
-    dates: 'Mar 3 - 8',
-    price: 27,
-    isGuestFavorite: true,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Jibhi, India',
-    rating: 4.89,
-    distance: '1,301 kilometers away',
-    dates: 'Jul 1 - 6',
-    price: 80,
-    isGuestFavorite: false,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Jibhi, India',
-    rating: 4.95,
-    distance: '1,302 kilometers away',
-    dates: 'Mar 11 - 16',
-    price: 140,
-    isGuestFavorite: true,
-  },
-  {
-    imageUrl: '/images/bg2.jpg',
-    location: 'Saini, India',
-    rating: 4.93,
-    distance: '1,283 kilometers away',
-    dates: 'Mar 3 - 8',
-    price: 27,
-    isGuestFavorite: true,
-  },
-];
+interface ApiTour {
+  id: string;
+  title: {
+    en: string;
+    [key: string]: string;
+  };
+  description: {
+    en: string;
+    [key: string]: string;
+  };
+  price: string;
+  organizer_title: string;
+  organizer_phone: string;
+  organizer_logo: string;
+  rating?: number;
+  files: Array<{
+    type: string;
+    url: string;
+  }>;
+  [key: string]: unknown;
+}
+
+interface ApiResponse {
+  data?: ApiTour[];
+  [key: string]: unknown;
+}
 
 export default function SearchPage() {
+  const searchParams = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [filteredProperties, setFilteredProperties] = useState(properties);
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch tours on page load
+  useEffect(() => {
+    const fetchTours = async () => {
+      try {
+        // Get search parameters from URL
+        const search = searchParams.get('search');
+        const dates = searchParams.get('dates');
+        
+        const filters: Record<string, string> = {};
+        
+        if (search) {
+          filters.search = search;
+        }
+        
+        if (dates) {
+          filters.dates = dates;
+        }
+        
+        // Add date filter if selected
+        if (selectedDate) {
+          filters.date = selectedDate.toISOString();
+        }
+
+        // Make POST request to API
+        const response = await api.post<ApiResponse>('/tour/list', filters);
+        
+        if (response?.data?.data) {
+          // Map API response to Tour type
+          const mappedTours = response.data.data.map((tour: ApiTour) => ({
+            id: parseInt(tour.id),
+            title: tour.title.en,
+            description: tour.description.en || '',
+            price: tour.price,
+            organizer_title: tour.organizer_title || '',
+            organizer_phone: tour.organizer_phone || '',
+            organizer_logo: tour.organizer_logo || '',
+            rating: tour.rating || 0,
+            files: tour.files || []
+          }));
+          setTours(mappedTours);
+        }
+      } catch (error) {
+        console.error('Error fetching tours:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTours();
+  }, [searchParams, selectedDate]); // Re-fetch when params or date changes
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
-    // Here you would typically filter properties based on the selected date
-    // For now, we'll just simulate filtering
-    const filtered = properties.filter(() => Math.random() > 0.5);
-    setFilteredProperties(filtered.length > 0 ? filtered : properties);
   };
 
   return (
@@ -123,7 +108,11 @@ export default function SearchPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
                 <div>
-                  <h2 className="text-xl font-semibold">Available Tours</h2>
+                  <h2 className="text-xl font-semibold">
+                    {searchParams.get('location') 
+                      ? `Tours in ${searchParams.get('location')}` 
+                      : 'Available Tours'}
+                  </h2>
                   {selectedDate && (
                     <p className="text-sm text-gray-500 mt-1">
                       Tours available for {selectedDate.toLocaleDateString('default', { 
@@ -135,41 +124,42 @@ export default function SearchPage() {
                   )}
                 </div>
                 <div className="text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
-                  {filteredProperties.length} tours found
+                  {tours.length} tours found
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProperties.map((property, index) => (
-                  <TourCard 
-                    tour={{
-                      id: index,
-                      organizer_phone: '',
-                      organizer_title: '',
-                      title: property.location,
-                      description: '',
-                      files: [{
-                        type: 'extra',
-                        url: property.imageUrl
-                      }],
-                      organizer_logo: property.imageUrl,
-                      rating: property.rating,
-                      price: property.price.toString(),
-                    }}
-                    onPressHandler={(tour: Tour) => {
-                      console.log('Selected tour:', tour);
-                    }}
-                    index={index}
-                    key={index}
-                  />
-                ))}
-              </div>
-
-              {filteredProperties.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-gray-500">No tours available for the selected date.</p>
-                  <p className="text-sm text-gray-400 mt-1">Try selecting a different date.</p>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                 </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {tours.map((tour, index) => (
+                      <TourCard 
+                        tour={tour}
+                        onPressHandler={(tour: Tour) => {
+                          console.log('Selected tour:', tour);
+                        }}
+                        index={index}
+                        key={tour.id}
+                      />
+                    ))}
+                  </div>
+
+                  {tours.length === 0 && (
+                    <div className="text-center py-12">
+                      <p className="text-gray-500">
+                        {searchParams.get('location')
+                          ? `No tours found in ${searchParams.get('location')}${selectedDate ? ' for the selected date' : ''}.`
+                          : 'No tours available for the selected criteria.'}
+                      </p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        Try adjusting your search or selecting a different date.
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

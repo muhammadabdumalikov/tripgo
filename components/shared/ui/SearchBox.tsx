@@ -26,7 +26,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
         dates: startDate.map(date => date.format("DD.MM.YYYY")),
       });
     } else {
-      router.push(`/search?location=${location}&dates=${startDate.map(date => date.format("DD.MM.YYYY")).join(',')}`);
+      router.push(`/search?search=${location}&dates=${startDate.map(date => date.format("DD.MM.YYYY")).join(',')}`);
     }
   };
 
