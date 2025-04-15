@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import TravelCalendar from '@/components/features/calendar/TravelCalendar';
 import { TourCard, Tour } from '@/components/(client)/features/tour/TourCard';
@@ -34,7 +34,8 @@ interface ApiResponse {
   [key: string]: unknown;
 }
 
-export default function SearchPage() {
+// Create a separate component that uses useSearchParams
+function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
@@ -42,8 +43,8 @@ export default function SearchPage() {
   const [tours, setTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Function to fetch tours
-  const fetchTours = async (params: Record<string, string>) => {
+  // Function to fetch tours wrapped in useCallback
+  const fetchTours = useCallback(async (params: Record<string, string>) => {
     setIsLoading(true);
     try {
       const filters = { ...params };
@@ -78,7 +79,7 @@ export default function SearchPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedDate]);
 
   // Handle search form submit
   const handleSearch = (e: React.FormEvent) => {
@@ -116,7 +117,7 @@ export default function SearchPage() {
     }
     
     fetchTours(params);
-  }, [searchParams]); // Re-fetch when params change
+  }, [searchParams, fetchTours]);
 
   // Fetch tours when date changes
   useEffect(() => {
@@ -136,7 +137,7 @@ export default function SearchPage() {
       
       fetchTours(params);
     }
-  }, [selectedDate]);
+  }, [selectedDate, searchParams, fetchTours]);
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -239,5 +240,18 @@ export default function SearchPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// Main component with Suspense boundary
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 } 
