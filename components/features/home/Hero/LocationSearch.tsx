@@ -1,15 +1,18 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
 import { GrLocation } from "react-icons/gr";
+import { api } from "@/utils/api";
+import { useQuery } from "@tanstack/react-query";
 
 interface LocationSearchProps {
   onLocationSelect?: (location: string) => void;
 }
 
 interface LocationItem {
-  id: number;
-  name: string;
-  address: string;
+  id: string;
+  title: string;
+  location_title: string;
+  location_country: string;
 }
 
 const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
@@ -18,14 +21,24 @@ const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const locationSearchContent = [
-    { id: 1, name: "Nefrit Ko'li", address: "Tashkent, Uzbekistan" },
-    { id: 2, name: "Gulkam Sharsharasi", address: "Tashkent, Uzbekistan" },
-    { id: 3, name: "Tuzkon ko'li", address: "Jizzax, Uzbekistan" },
-    { id: 4, name: "Issiqko'l", address: "Bishkek, Kyrgyzstan" },
-    { id: 5, name: "Issiqko'l", address: "Bishkek, Kyrgyzstan" },
-    { id: 6, name: "Issiqko'l", address: "Bishkek, Kyrgyzstan" },
-  ];
+  const { data: locationSearchContent, isLoading, refetch } = useQuery({
+    queryKey: ["destinations"],
+    queryFn: async () => {
+      const response = await api.post<{ data: LocationItem[] }>('/destination/list', {});
+      if (!response.success || !response.data?.data) {
+        throw new Error(response.error || 'Failed to fetch destinations');
+      }
+      return response.data.data;
+    },
+    enabled: false, // Disable automatic fetching
+  });
+
+  const handleInputClick = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen) {
+      refetch(); // Fetch destinations when opening the dropdown
+    }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleOptionClick = (item: any) => {
@@ -56,7 +69,7 @@ const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
       {/* Input Field */}
       <div
         className="flex flex-col cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleInputClick}
       >
         <p className="text-sm font-medium text-gray-800">Location</p>
         <input
@@ -70,28 +83,34 @@ const LocationSearch = ({ onLocationSelect }: LocationSearchProps) => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute w-[calc(100vw-3rem)] md:w-96 left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0 mt-4 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] max-w-md border border-gray-100 overflow-hidden z-50">
+        <div className="absolute w-[calc(100vw-3rem)] md:w-96 left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0 mt-6 bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] max-w-md border border-gray-100 overflow-hidden z-50">
           <ul className="py-2 max-h-[320px] overflow-y-auto">
-            {locationSearchContent.map((item) => (
-              <li
-                key={item.id}
-                className={`flex items-center px-6 py-3.5 cursor-pointer 
-                  ${selectedItem?.id === item.id 
-                    ? "bg-[#febd2d]/10" 
-                    : "hover:bg-[#febd2d]/5"}`}
-                onClick={() => handleOptionClick(item)}
-              >
-                <div className="w-8 h-8 rounded-lg bg-[#febd2d]/10 flex items-center justify-center flex-shrink-0">
-                  <GrLocation className="text-[#febd2d] text-lg" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-800">
-                    {item.name}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-0.5">{item.address}</p>
-                </div>
-              </li>
-            ))}
+            {isLoading ? (
+              <li className="px-6 py-3.5 text-sm text-gray-500">Loading destinations...</li>
+            ) : locationSearchContent?.length === 0 ? (
+              <li className="px-6 py-3.5 text-sm text-gray-500">No destinations found</li>
+            ) : (
+              locationSearchContent?.map((item: LocationItem) => (
+                <li
+                  key={item.id}
+                  className={`flex items-center px-6 py-3.5 cursor-pointer 
+                    ${selectedItem?.id === item.id 
+                      ? "bg-[#febd2d]/10" 
+                      : "hover:bg-[#febd2d]/5"}`}
+                  onClick={() => handleOptionClick(item)}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-[#febd2d]/10 flex items-center justify-center flex-shrink-0">
+                    <GrLocation className="text-[#febd2d] text-lg" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-800">
+                      {item.title}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">{item.location_title}, {item.location_country}</p>
+                  </div>
+                </li>
+              ))
+            )}
           </ul>
         </div>
       )}
