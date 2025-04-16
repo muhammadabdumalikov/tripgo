@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import TravelCalendar from '@/components/features/calendar/TravelCalendar';
 import { TourCard, Tour } from '@/components/(client)/features/tour/TourCard';
 import { api } from '@/utils/api';
-import { FiSearch } from 'react-icons/fi';
 
 interface ApiTour {
   id: string;
@@ -36,9 +35,7 @@ interface ApiResponse {
 
 // Create a separate component that uses useSearchParams
 function SearchPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [tours, setTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,25 +78,6 @@ function SearchPageContent() {
     }
   }, [selectedDate]);
 
-  // Handle search form submit
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Create new URL with search params
-    const params = new URLSearchParams(searchParams);
-    if (searchQuery) {
-      params.set('search', searchQuery);
-    } else {
-      params.delete('search');
-    }
-    
-    // Update URL without full page refresh
-    router.push(`/search?${params.toString()}`);
-    
-    // Fetch tours with new params
-    fetchTours({ search: searchQuery });
-  };
-
   // Fetch tours on page load or when params change
   useEffect(() => {
     const search = searchParams.get('search');
@@ -109,8 +87,7 @@ function SearchPageContent() {
     
     if (search) {
       params.search = search;
-      setSearchQuery(search);
-    }
+      }
     
     if (dates) {
       params.dates = dates;
@@ -146,30 +123,7 @@ function SearchPageContent() {
   return (
     <main className="min-h-screen bg-gray-50 pt-32 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Search bar */}
-        <div className="mb-8">
-          <form onSubmit={handleSearch} className="relative max-w-3xl mx-auto">
-            <div className="relative flex items-center">
-              <FiSearch className="absolute left-4 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search destinations, tours..."
-                className="w-full pl-12 pr-24 py-3 rounded-full border border-gray-300 shadow-md 
-                       focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent
-                       text-gray-700"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 bg-[#34E0A1] text-black px-6 py-2 rounded-full 
-                       font-medium hover:bg-[#2bc589] transition-colors"
-              >
-                Search
-              </button>
-            </div>
-          </form>
-        </div>
+     
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Calendar Widget */}
