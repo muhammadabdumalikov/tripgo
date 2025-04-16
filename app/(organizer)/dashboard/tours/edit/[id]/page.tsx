@@ -81,7 +81,7 @@ interface TourForm {
   start_date: string;
   end_date: string;
   status: number;
-  images: string[];
+  files: {url: string, type: string}[];
   route_json: RoutePoint[];
   includes: Array<{
     title: string;
@@ -125,7 +125,7 @@ export default function EditTourPage() {
     start_date: '2025-01-01',
     end_date: '2025-01-01',
     status: 1,
-    images: [],
+    files: [],
     route_json: [{
       type: 'location',
       title: '',
@@ -201,7 +201,7 @@ export default function EditTourPage() {
               start_date: formatDate(tourData.start_date),
               end_date: formatDate(tourData.end_date),
               status: tourData.status,
-              images: files.map(file => file.url),
+              files: files,
               route_json: routePoints,
               includes: includes.length > 0 ? includes : defaultIncludes,
               excluded: tourData.excluded_json || [],
@@ -252,6 +252,31 @@ export default function EditTourPage() {
     }
   };
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    
+    setFormData(prev => ({
+      ...prev,
+      price: value
+    }));
+  };
+
+  const handleSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      sale_price: value
+    }));
+  };
+
+   const handleSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      seats: +value
+    }));
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     
@@ -283,7 +308,7 @@ export default function EditTourPage() {
           setUploadedFiles(prev => [...prev, newFile]);
           setFormData(prev => ({
             ...prev,
-            images: [...prev.images, url]
+            files: [...prev.files, newFile]
           }));
         }
       } catch (err) {
@@ -336,7 +361,7 @@ export default function EditTourPage() {
           setUploadedFiles(prev => [...prev, newFile]);
           setFormData(prev => ({
             ...prev,
-            images: [...prev.images, url]
+            files: [...prev.files, newFile]
           }));
         }
       }
@@ -366,7 +391,7 @@ export default function EditTourPage() {
       setUploadedFiles(prev => prev.filter((_, i) => i !== index));
       setFormData(prev => ({
         ...prev,
-        images: prev.images.filter((_, i) => i !== index)
+        files: prev.files.filter((_, i) => i !== index)
       }));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete image');
@@ -669,7 +694,7 @@ export default function EditTourPage() {
                   type="number"
                   name="seats"
                   value={formData.seats}
-                  onChange={handleChange}
+                  onChange={handleSeatsChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   required
                   min="1"
@@ -687,7 +712,7 @@ export default function EditTourPage() {
                   type="number"
                   name="price"
                   value={formData.price}
-                  onChange={handleChange}
+                  onChange={handlePriceChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   required
                   min="0"
@@ -706,7 +731,7 @@ export default function EditTourPage() {
                   type="number"
                   name="sale_price"
                   value={formData.sale_price}
-                  onChange={handleChange}
+                  onChange={handleSalePriceChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   min="0"
                   step="1000"

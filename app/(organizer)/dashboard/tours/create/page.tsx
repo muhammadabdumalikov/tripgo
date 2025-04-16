@@ -204,7 +204,7 @@ export default function CreateTourPage() {
         reader.onloadend = () => {
           setFormData(prev => ({
             ...prev,
-            images: [...prev.images, reader.result as string]
+            files: [...prev.images, reader.result as string]
           }));
         };
         reader.readAsDataURL(file);
@@ -234,7 +234,7 @@ export default function CreateTourPage() {
         reader.onloadend = () => {
           setFormData(prev => ({
             ...prev,
-            images: [...prev.images, reader.result as string]
+            files: [...prev.images, reader.result as string]
           }));
         };
         reader.readAsDataURL(file);
@@ -319,7 +319,7 @@ export default function CreateTourPage() {
         .filter(item => !item.included)
         .map(item => item.title);
 
-      const response = await api.post('/tour/create', {
+      const response = await api.post('/admin/tour/create', {
         ...formData,
         included_json: included,
         excluded_json: excluded,
