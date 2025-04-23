@@ -28,7 +28,7 @@ import { Tour } from '@/types/tour';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-interface FileInfo {
+export interface FileInfo {
   url: string;
   name: string;
   type?: string;
@@ -62,7 +62,7 @@ interface Includes {
   included: boolean;
 }
 
-interface TourForm {
+export interface TourForm {
   title: {
     en: string;
     ru: string;

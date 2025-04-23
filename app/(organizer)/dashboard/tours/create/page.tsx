@@ -16,11 +16,13 @@ import {
   Loader2,
   Plus
 } from 'lucide-react';
-import { api } from '@/utils/api';
+import { api, API_BASE_URL } from '@/utils/api';
 import { Button } from '@/components/ui/button';
 import { Tour } from '@/types/tour';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { FileInfo, TourForm } from '../edit/[id]/page';
+import { getProxiedImageUrl } from '@/utils/image';
 
 type Language = 'en' | 'ru' | 'uz';
 
@@ -49,34 +51,6 @@ export interface Includes {
   included: boolean;
 }
 
-interface TourForm {
-  title: {
-    en: string;
-    ru: string;
-    uz: string;
-  };
-  description: {
-    en: string;
-    ru: string;
-    uz: string;
-  };
-  location: number;
-  duration: string;
-  seats: number;
-  price: number | string;
-  sale_price: number | string;
-  start_date: string;
-  end_date: string;
-  status: number;
-  images: string[];
-  route_json: RoutePoint[];
-  includes: Array<{
-    title: string;
-    included: boolean;
-  }>;
-  excluded: string[];
-}
-
 export default function CreateTourPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -101,7 +75,7 @@ export default function CreateTourPage() {
     start_date: '2025-01-01',
     end_date: '2025-01-01',
     status: 1,
-    images: [],
+    files: [],
     route_json: [{
       type: 'location',
       title: '',
@@ -122,6 +96,8 @@ export default function CreateTourPage() {
   const [activeLanguage, setActiveLanguage] = useState<Language>('en');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);
 
   const status = [
     {name: 'Active', value: 1},
@@ -196,19 +172,44 @@ export default function CreateTourPage() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+    
     if (files) {
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
+      try {
+        for (const file of Array.from(files)) {
+          const formData = new FormData();
+          formData.append('file', file, file.name);
+          
+          const response = await fetch(`${API_BASE_URL}/file-router/simple-upload`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to upload image');
+          }
+
+          const data = await response.json();
+          
+          const { url, name } = data;
+          
+          const newFile = {
+            url,
+            name,
+            type: 'extra'
+          };
+
+          setUploadedFiles(prev => [...prev, newFile]);
           setFormData(prev => ({
             ...prev,
-            files: [...prev.images, reader.result as string]
+            files: [...prev.files, newFile]
           }));
-        };
-        reader.readAsDataURL(file);
-      });
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to upload images');
+        console.error('Error uploading images:', err);
+      }
     }
   };
 
@@ -222,31 +223,75 @@ export default function CreateTourPage() {
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
     const files = e.dataTransfer.files;
-    Array.from(files).forEach(file => {
-      if (file.type.includes('image')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
+    try {
+      for (const file of Array.from(files)) {
+        if (file.type.includes('image')) {
+          const formData = new FormData();
+          formData.append('file', file, file.name);
+          
+          const response = await fetch(`${API_BASE_URL}/file-router/simple-upload`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to upload image');
+          }
+
+          const data = await response.json();
+          const { url, name } = data;
+          
+          const newFile = {
+            url,
+            name,
+            type: 'extra'
+          };
+
+          setUploadedFiles(prev => [...prev, newFile]);
           setFormData(prev => ({
             ...prev,
-            files: [...prev.images, reader.result as string]
+            files: [...prev.files, newFile]
           }));
-        };
-        reader.readAsDataURL(file);
+        }
       }
-    });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to upload images');
+      console.error('Error uploading images:', err);
+    }
   };
 
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
+ const removeImage = async (index: number) => {
+    try {
+      const fileToDelete = uploadedFiles[index];
+      if (!fileToDelete) return;
+
+      const response = await fetch(`${API_BASE_URL}/file-router/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ filename: fileToDelete.name }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete image');
+      }
+
+      setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+      setFormData(prev => ({
+        ...prev,
+        files: prev.files.filter((_, i) => i !== index)
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete image');
+      console.error('Error deleting image:', err);
+    }
   };
 
   const addRoutePoint = () => {
@@ -310,6 +355,13 @@ export default function CreateTourPage() {
     setError(null);
 
     try {
+       const files = uploadedFiles.map(file => ({
+        url: file.url,
+        type: file.type || 'extra',
+        size: file.size || 0,
+        name: file.name,
+       }));
+      
       // Transform includes data for API
       const included = formData.includes
         .filter(item => item.included)
@@ -321,6 +373,7 @@ export default function CreateTourPage() {
 
       const response = await api.post('/admin/tour/create', {
         ...formData,
+        files,
         included_json: included,
         excluded_json: excluded,
       });
@@ -619,26 +672,44 @@ export default function CreateTourPage() {
             </div>
 
             {/* Image Preview */}
-            {formData.images.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-                {formData.images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <Image
-                      src={image}
-                      alt={`Tour image ${index + 1}`}
-                      width={200}
-                      height={150}
-                      className="rounded-lg object-cover w-full h-32"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-sm font-medium text-gray-700">Uploaded Images</h3>
+                  <span className="text-sm text-gray-500">{uploadedFiles.length} files</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {uploadedFiles.map((file, index) => (
+                    <div key={file.url} className="relative group">
+                      <div className="relative h-32 rounded-lg overflow-hidden">
+                        <Image
+                          src={getProxiedImageUrl(file.url)}
+                          alt={`Tour image ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                        {file.type === 'main' && (
+                          <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                            Main
+                          </div>
+                        )}
+                        {file.type === 'extra' && (
+                          <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                            Extra
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Delete image"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
