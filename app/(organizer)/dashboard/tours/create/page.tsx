@@ -414,7 +414,7 @@ export default function CreateTourPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-sm p-6">
         <h1 className="text-2xl font-bold mb-6">Create New Tour</h1>
         
         <form onSubmit={handleSubmit} className="space-y-8 p-4">

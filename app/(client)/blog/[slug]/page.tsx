@@ -49,7 +49,7 @@ export default async function BlogDetail() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="mt-[12vh] max-w-4xl mx-auto px-4 py-8">
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">

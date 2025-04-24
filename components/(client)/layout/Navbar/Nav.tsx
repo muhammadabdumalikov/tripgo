@@ -22,7 +22,7 @@ const Nav = () => {
 
   return (
     <div className={`${isHomePage
-        ? navBg ? 'bg-white shadow-md' : 'bg-transparent'
+        ? navBg ? 'bg-white shadow-sm' : 'bg-transparent'
         : 'bg-white'
       } transition-all duration-200 h-[12vh] z-[1000] fixed w-full`}>
       <div className='flex items-center h-full w-[90%] xl:w-[80%] mx-auto'>

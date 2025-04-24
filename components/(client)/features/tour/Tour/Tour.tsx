@@ -25,9 +25,9 @@ const RecommendedTours = () => {
 
   if (isLoading) {
     return (
-      <div className="w-[90%] xl:w-[80%] py-16 px-12 mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
+      <div className="w-[90%] xl:w-[80%] py-16 mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
         {[1, 2, 3, 4].map((index) => (
-          <div key={index} className="snap-start bg-white rounded-2xl shadow-md overflow-hidden animate-pulse">
+          <div key={index} className="snap-start bg-white rounded-2xl shadow-sm overflow-hidden animate-pulse">
             {/* Image Skeleton */}
             <div className="relative h-48 bg-gray-200">
               {/* Price Tag Skeleton */}
@@ -62,7 +62,7 @@ const RecommendedTours = () => {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-[90%] xl:w-[80%] mx-auto py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3 text-red-700">
           <XCircle className="w-5 h-5 text-red-500" />
           <p>Error: {error.message}</p>
@@ -77,7 +77,7 @@ const RecommendedTours = () => {
 
   return (
     <div className="w-[90%] xl:w-[80%] py-8 mx-auto mb-8">
-      <div className="w-full flex justify-between items-center px-12 mb-4">
+      <div className="w-full flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Hot Tours</h2>
         <button
           onClick={() => router.push('/blogs')}
@@ -87,7 +87,7 @@ const RecommendedTours = () => {
         </button>
       </div>
 
-      <div className="w-full pt-2 pb-8 px-12 grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
+      <div className="w-full pt-2 pb-8 grid grid-cols-1 md:grid-cols-4 gap-4 overflow-x-scroll scroll-smooth snap-x snap-mandatory mb-8">
         {data?.data?.map((item, index) => (
           <TourCard key={index} index={index} tour={item} onPressHandler={onPressHandler} />
         ))}

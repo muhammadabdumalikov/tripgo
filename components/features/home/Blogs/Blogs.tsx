@@ -20,7 +20,7 @@ const Blogs = () => {
   const router = useRouter();
 
   return (
-    <div className="w-[90%] xl:w-[80%] py-16 px-12 mx-auto mb-8">
+    <div className="w-[90%] xl:w-[80%] py-16 mx-auto mb-8">
       <div className="w-full flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Latest Blogs</h2>
         <button

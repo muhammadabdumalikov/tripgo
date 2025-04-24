@@ -54,18 +54,18 @@ const Stories = () => {
   return (
     <>
       <section className="mt-12 py-8 w-[90%] xl:w-[80%] mx-auto mb-8">
-        <div className="w-full flex justify-between items-center px-12 mb-4 pt-4">
+        <div className="w-full flex justify-between items-center mb-4 pt-4">
           <h2 className="text-2xl font-bold">Travel Stories</h2>
         </div>
         
-        <div className="w-full pt-2 pb-8 px-12 flex items-center space-x-14 overflow-x-auto">
+        <div className="w-full pt-2 pb-8 flex items-center space-x-14 overflow-x-auto">
           {stories.map((story) => (
             <div 
               key={story.id} 
               className="flex flex-col items-center group cursor-pointer flex-shrink-0"
               onClick={() => openStory(story)}
             >
-              <div className="relative w-32 h-32 mb-2">
+              <div className="relative w-28 h-28 mb-2">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-300 p-1 
                               transform transition-transform duration-300 group-hover:scale-105">
                   <div className="w-full h-full rounded-full overflow-hidden bg-white p-0.5">
