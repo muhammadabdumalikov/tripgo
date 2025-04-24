@@ -31,7 +31,7 @@ const SearchBox = ({ onSearch }: SearchBoxProps) => {
   };
 
   return (
-    <div className="my-2 md:flex md:items-center bg-white md:rounded-full rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-shadow duration-200">
+    <div className="my-2 md:flex md:items-center bg-white md:rounded-full rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
       <div className="flex flex-col md:flex-row w-full">
         {/* Location */}
         <div className="flex-1 px-6 py-4 md:py-1 border-b md:border-b-0 md:border-r border-gray-200">

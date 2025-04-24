@@ -23,7 +23,7 @@ const Nav = () => {
   return (
     <div className={`${isHomePage
         ? navBg ? 'bg-white shadow-sm' : 'bg-transparent'
-        : 'bg-white'
+        : 'bg-white shadow-sm'
       } transition-all duration-200 h-[12vh] z-[1000] fixed w-full`}>
       <div className='flex items-center h-full w-[90%] xl:w-[80%] mx-auto'>
         {/* LOGO */}

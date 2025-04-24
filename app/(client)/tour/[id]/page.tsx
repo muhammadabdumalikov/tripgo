@@ -91,7 +91,7 @@ function MediaGallery({
   return (
     <>
       {/* Main Gallery Grid */}
-      <div className="relative h-[75vh] max-w-7xl mx-auto mt-28">
+      <div className="relative h-[75vh] max-w-7xl mx-auto mt-32">
         <div className="mx-auto h-full w-full">
           <div className="flex h-full gap-1">
             {/* Main Large Image */}

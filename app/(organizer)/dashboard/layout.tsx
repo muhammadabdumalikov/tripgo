@@ -13,13 +13,15 @@ import {
   Settings,
   LogOut,
   Menu,
-  X 
+  X,
+  FileText 
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Profile', href: '/dashboard/profile', icon: User },
   { name: 'Tours', href: '/dashboard/tours', icon: Map },
+  { name: 'Blog', href: '/dashboard/blog', icon: FileText },
   { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
   { name: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
