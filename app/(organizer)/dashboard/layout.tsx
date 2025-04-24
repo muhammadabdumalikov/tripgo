@@ -14,8 +14,10 @@ import {
   LogOut,
   Menu,
   X,
-  FileText 
+  FileText,
+  Home
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -73,16 +75,23 @@ export default function DashboardLayout({
                 )}
               </button>
               <Link href="/dashboard" className="flex items-center space-x-3 ml-4">
-                <span className="text-xl font-bold text-gray-900">Trippo Organizer</span>
+                <span className="text-xl font-bold text-gray-900 hidden sm:inline">Trippo Organizer</span>
+                <span className="text-xl font-bold text-gray-900 sm:hidden">Trippo</span>
               </Link>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center space-x-1 sm:space-x-2">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="flex items-center">
+                  <Home className="w-5 h-5" />
+                  <span className="hidden sm:inline ml-2">Homepage</span>
+                </Button>
+              </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="flex items-center p-2 sm:px-4 sm:py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <LogOut className="w-5 h-5 mr-2" />
-                <span>Logout</span>
+                <LogOut className="w-5 h-5" />
+                <span className="hidden sm:inline ml-2">Logout</span>
               </button>
             </div>
           </div>
@@ -107,6 +116,14 @@ export default function DashboardLayout({
             <div className="flex flex-col h-full">
               <div className="flex-1 overflow-y-auto pt-5 pb-4">
                 <nav className="px-4 space-y-1">
+                  <Link
+                    href="/"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100"
+                  >
+                    <Home className="mr-3 h-5 w-5 text-gray-400" />
+                    Homepage
+                  </Link>
                   {navigation.map((item) => {
                     const isActive = pathname === item.href;
                     return (

@@ -269,7 +269,7 @@ export default function EditTourPage() {
     }));
   };
 
-   const handleSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setFormData(prev => ({
       ...prev,

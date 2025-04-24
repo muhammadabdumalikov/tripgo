@@ -349,6 +349,14 @@ export default function CreateTourPage() {
     }));
   };
 
+   const handleSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      seats: +value
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -537,7 +545,7 @@ export default function CreateTourPage() {
                   type="number"
                   name="group_size"
                   value={formData.seats}
-                  onChange={handleChange}
+                  onChange={handleSeatsChange}
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-[#febd2d] focus:border-[#febd2d]"
                   required
                   min="1"
