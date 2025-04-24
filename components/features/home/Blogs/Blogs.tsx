@@ -25,7 +25,7 @@ const Blogs = () => {
         <h2 className="text-2xl font-bold">Latest Blogs</h2>
         <button
           onClick={() => router.push('/blogs')}
-          className="text-blue-600 hover:text-blue-800 font-semibold"
+          className="text-[#febd2d] hover:text-[#e5a827] font-semibold"
         >
           See All
         </button>

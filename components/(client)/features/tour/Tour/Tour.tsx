@@ -76,12 +76,12 @@ const RecommendedTours = () => {
   };
 
   return (
-    <div className="w-[90%] xl:w-[80%] py-16 mx-auto mb-8">
+    <div className="w-[90%] xl:w-[80%] py-8 mx-auto mb-8">
       <div className="w-full flex justify-between items-center px-12 mb-4">
         <h2 className="text-2xl font-bold">Hot Tours</h2>
         <button
           onClick={() => router.push('/blogs')}
-          className="text-blue-600 hover:text-blue-800 font-semibold"
+          className="text-[#febd2d] hover:text-[#e5a827] font-semibold"
         >
           See All
         </button>

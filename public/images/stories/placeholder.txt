@@ -1,0 +1,1 @@
+This directory contains story images for the home page stories section. 
